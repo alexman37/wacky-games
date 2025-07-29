@@ -13,7 +13,13 @@ using System;
 public class Tile : MonoBehaviour
 {
     // Tile variables.
+    public enum Type {
+        Mine,
+        Number,
+        Blank
+    }
     public Vector2 coordinates;
+    public Type type;
     public bool hasMine;
     public bool flagged;
     public int value;
