@@ -28,7 +28,7 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        debug.Log("Tile created at coordinates: " + coordinates + " with type: " + type);
+        Debug.Log("Tile created at coordinates: " + coordinates + " with type: " + type);
     }
 
     // TODO: Instantiate the tile class with all tile variables
