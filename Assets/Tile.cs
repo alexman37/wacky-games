@@ -28,19 +28,25 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        debug.Log("Tile created at coordinates: " + coordinates + " with type: " + type);
     }
 
     // TODO: Instantiate the tile class with all tile variables
-    public Tile()
+    public Tile(Vector2 coordinates, Type type, bool hasMine, int value, List<Tile> adjacencies)
     {
-
+        this.coordinates = coordinates;
+        this.type = type;
+        this.hasMine = hasMine;
+        this.value = value;
+        this.adjacencies = adjacencies;
+        flagged = false;
     }
 
     // Subscribe to game events in OnEnable, unsubscribe in OnDisable
     private void OnEnable()
     {
         GameEventsManager.changeTileClicking += EnableOrDisableClicks;
+        
     }
 
     private void OnDisable()
