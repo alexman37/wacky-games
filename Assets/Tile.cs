@@ -14,7 +14,13 @@ using UnityEngine.Tilemaps;
 public class Tile : MonoBehaviour
 {
     // Tile variables.
+    public enum Type {
+        Mine,
+        Number,
+        Blank
+    }
     public Vector2 coordinates;
+    public Type type;
     public bool hasMine;
     public bool flagged = false;
     public bool revealed = false;
@@ -24,11 +30,11 @@ public class Tile : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        Debug.Log("Tile created at coordinates: " + coordinates + " with type: " + type);
     }
 
     // TODO: Instantiate the tile class with all tile variables
-    public Tile()
+    public Tile(Vector2 coordinates, Type type, bool hasMine, int value, List<Tile> adjacencies)
     {
         adjacencies = new List<Tile>();
         hasMine = false;
@@ -63,6 +69,7 @@ public class Tile : MonoBehaviour
     private void OnEnable()
     {
         GameEventsManager.changeTileClicking += EnableOrDisableClicks;
+        
     }
 
     private void OnDisable()
@@ -74,7 +81,7 @@ public class Tile : MonoBehaviour
 
     private void EnableOrDisableClicks(bool enable)
     {
-        // TODO: Enable or disable the ability to do stuff when you click on this tile (OnMouseDown runs whenever you click it)
+        
     }
 
     private void RevealTile()
@@ -98,20 +105,20 @@ public class Tile : MonoBehaviour
         }
         else if (hasMine)
         {
-            
+
         }
         else
         {
             GetComponent<Renderer>().material.color = Color.blue; // Change color to yellow for revealed tile with a value > 0
             return;
         }
-        
+
     }
 
     private void OnMouseOver()
     {
         //Debug.Log("Mouse is over tile at coordinates: " + coordinates);
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             HandleLeftClick();
         }
@@ -144,5 +151,14 @@ public class Tile : MonoBehaviour
     private void OnMouseExit()
     {
         //Debug.Log("Mouse exited tile at coordinates: " + coordinates);
+    }
+
+    private void OnMouseDown()
+    {
+        //Debug.Log("Mouse exited tile at coordinates: " + coordinates);
+        // TODO: Process clicking on a tile:
+        //  - If this tile is a mine, you lose immediately
+        //  - If not, reveal its value
+        //  - Cascading: If this tile has a value of '0' look for other neighboring tiles with a value of 0; reveal them and all their neighbors.
     }
 }
