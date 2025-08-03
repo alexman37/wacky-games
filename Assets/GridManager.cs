@@ -152,9 +152,14 @@ public class GridManager : MonoBehaviour
         }
         else if(tileType == TileType.Hex)
         {
-            float hexSize = hexTile.GetComponent<HexagonMeshGenerator>().GetSize();            
-            float horizontalSpacing = hexSize * 1.5f + .1f; // Horizontal distance between hex centers
-            float verticalSpacing = hexSize * Mathf.Sqrt(3) + .1f; // Vertical distance between hex centers
+            // TODO: Do we want the 3d object approach or the old 2D one?
+            // 3d objects allow for easier handling of clicks and sprite adjustment.
+            //float hexSize = hexTile.GetComponent<HexagonMeshGenerator>().GetSize();            
+            //float horizontalSpacing = hexSize * 1.5f + .1f; // Horizontal distance between hex centers
+            //float verticalSpacing = hexSize * Mathf.Sqrt(3) + .1f; // Vertical distance between hex centers
+            float horizontalSpacing = 1.8f;
+            float verticalSpacing = 2.1f;
+
             // Generate a hexagonal grid
             for (int row = 0; row < rowCount; row++)
             {
@@ -167,11 +172,12 @@ public class GridManager : MonoBehaviour
                         row * horizontalSpacing + 1f
                     );
                     GameObject tile = Instantiate(hexTile, worldPosition, Quaternion.identity);
-                    Mesh hexMesh = tile.GetComponent<HexagonMeshGenerator>().GetMesh();
-                    tile.GetComponent<MeshCollider>().sharedMesh = hexMesh;
+                    //Mesh hexMesh = tile.GetComponent<HexagonMeshGenerator>().GetMesh();
+                    //tile.GetComponent<MeshCollider>().sharedMesh = hexMesh;
                     tile.transform.eulerAngles= new Vector3(180, 90, 0); // Optional: Rotate the hex tile for better visibility
                     tile.name = $"HexTile_{row}_{col}"; // Optional: Name the tile for easier debugging
                     tile.transform.parent = GridParent.transform;
+                    tile.transform.localRotation = Quaternion.Euler(-90, 0, 0);
                     Grid[position] = tile;
                     Tile tileComponent = tile.GetComponent<Tile>();
                     tileComponent.coordinates = position; // Set the coordinates for the tile
@@ -356,10 +362,9 @@ public class GridManager : MonoBehaviour
             if (tile != null)
             {
                 Debug.Log($"Tile at {position} has {tile.adjacencies.Count} neighbors and value {tile.value}");
-                for (int i = 0; i < tile.adjacencies.Count; i++)
+                foreach(Tile adj in tile.adjacencies)
                 {
-                    Tile neighbor = tile.adjacencies[i];
-                    Debug.Log($"  - Neighbor {i}: at {neighbor.coordinates}, hasMine: {neighbor.hasMine}");
+                    Debug.Log($"  - Neighbor {adj}: at {adj.coordinates}, hasMine: {adj.hasMine}");
                 }
             }
             else

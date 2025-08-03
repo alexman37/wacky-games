@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 /// <summary>
 /// Everything to do with a single tile in minesweeper.
@@ -14,36 +13,37 @@ using UnityEngine.Tilemaps;
 public class Tile : MonoBehaviour
 {
     // Tile variables.
-    public enum Type {
-        Mine,
-        Number,
-        Blank
-    }
     public Vector2 coordinates;
-    public Type type;
     public bool hasMine;
     public bool flagged = false;
     public bool revealed = false;
     public int value = 0;
-    public List<Tile> adjacencies;
+    public HashSet<Tile> adjacencies;
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Tile created at coordinates: " + coordinates + " with type: " + type);
+        Debug.Log("Tile created at coordinates: " + coordinates);
     }
 
     // TODO: Instantiate the tile class with all tile variables
-    public Tile(Vector2 coordinates, Type type, bool hasMine, int value, List<Tile> adjacencies)
+    public Tile()
     {
-        adjacencies = new List<Tile>();
-        hasMine = false;
+        this.adjacencies = new HashSet<Tile>();
+        this.hasMine = false;
     }
 
+    /// <summary>
+    /// Call this when the grid is finished generating to assign a value to each tile.
+    /// </summary>
     public void AssignValue()
     {
         value = GetAdjacentMineCount();
     }
+
+    /// <summary>
+    /// Attempt to add tile to its local neighbors list
+    /// </summary>
     public void AddNeighbor(Tile neighbor)
     {
         if (neighbor != null && !adjacencies.Contains(neighbor))
@@ -52,6 +52,10 @@ public class Tile : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// How many mines does this tile border?
+    /// You only need to call this during generation. For in-game computations, just get the value property.
+    /// </summary>
     public int GetAdjacentMineCount()
     {
         int count = 0;
@@ -77,13 +81,17 @@ public class Tile : MonoBehaviour
         GameEventsManager.changeTileClicking -= EnableOrDisableClicks;
     }
 
-    // Update is called once per frame
-
+    /// <summary>
+    /// Turn on / off clicking on tiles with game events
+    /// </summary>
     private void EnableOrDisableClicks(bool enable)
     {
         
     }
 
+    /// <summary>
+    /// Show the value of a tile
+    /// </summary>
     private void RevealTile()
     {
         revealed = true; // Mark this tile as revealed
@@ -94,7 +102,10 @@ public class Tile : MonoBehaviour
         GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles  
         if (value == 0)
         {
-            GetComponent<Renderer>().material.color = Color.green; // Change color to green for revealed tile with value 0
+            // TODO - better styling options here
+            // Change color to green for revealed tile with value 0
+            //GetComponent<Renderer>().materials[1].mainTexture = GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_2").texture;
+            GetComponent<Renderer>().materials[1].color = Color.green;
             foreach (Tile neighbor in adjacencies)
             {
                 if (neighbor != null)
@@ -105,11 +116,14 @@ public class Tile : MonoBehaviour
         }
         else if (hasMine)
         {
-
+            // Do not reveal it if it has a mine.
         }
         else
         {
-            GetComponent<Renderer>().material.color = Color.blue; // Change color to yellow for revealed tile with a value > 0
+            // TODO - better styling options
+            // Change color to yellow for revealed tile with a value > 0
+            //GetComponent<Renderer>().materials[1].mainTexture = GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_3").texture;
+            GetComponent<Renderer>().materials[1].color = Color.blue;
             return;
         }
 
@@ -128,26 +142,63 @@ public class Tile : MonoBehaviour
             HandleRightClick();
         }
     }
+
+    /// <summary>
+    /// Reveal if possible / useful.
+    /// </summary>
     private void HandleLeftClick()
     {
-        if (hasMine)
+        if(!flagged && !revealed)
         {
-            GetComponent<Renderer>().material.color = Color.red; // Change color to red for mine tile
-            Debug.Log("Game Over! You clicked on a mine at coordinates: " + coordinates);
-            return;
+            Debug.Log("Left click on tile at coordinates: " + coordinates);
+            if (hasMine)
+            {
+                GetComponent<Renderer>().materials[1].color = Color.red; // Change color to red for mine tile
+                Debug.Log("Game Over! You clicked on a mine at coordinates: " + coordinates);
+                return;
+            }
+            RevealTile();
         }
-        RevealTile();
     }
+
+    /// <summary>
+    /// Flag only if the tile is still unknown.
+    /// </summary>
     private void HandleRightClick()
     {
-        Debug.Log("Right click on tile at coordinates: " + coordinates);
         if (!revealed)
         {
+            Debug.Log("Right click on tile at coordinates: " + coordinates);
             // Flag handling logic
             flagged = !flagged;
-            GetComponent<Renderer>().material.color = flagged ? Color.cyan : Color.white;
+            /*Material mat = GetComponent<Renderer>().materials[1];
+            Sprite spr = flagged ?
+                GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_1"):
+                GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_0");
+            mat.mainTexture = spr.texture;
+            mat.mainTextureOffset = UVToOffset(spr.uv);
+            mat.mainTextureScale = UVToScale(spr.uv);*/
+            GetComponent<Renderer>().materials[1].color = flagged ? Color.cyan : Color.gray;
         }
     }
+
+    private Vector2 UVToOffset(Vector2 [] uv)
+    {
+        Vector2 offset = uv[2];
+        return offset;
+    }
+
+    private Vector2 UVToScale(Vector2[] uv)
+    {
+        Vector2 scale = uv[1] - uv[2];
+        return scale;
+    }
+
+    public override string ToString()
+    {
+        return $"Tile at {coordinates}: hasMine {hasMine} value {value}";
+    }
+
     private void OnMouseExit()
     {
         //Debug.Log("Mouse exited tile at coordinates: " + coordinates);
