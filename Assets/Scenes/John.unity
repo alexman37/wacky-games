@@ -154,7 +154,7 @@ MonoBehaviour:
   GridParent: {fileID: 359238534}
   tilesWithMines: []
   checkedTiles: []
-  tileType: 0
+  tileType: 1
   RowCount: 15
   ColCount: 15
   MineCount: 99

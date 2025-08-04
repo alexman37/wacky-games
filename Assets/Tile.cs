@@ -110,6 +110,20 @@ public class Tile : MonoBehaviour
         {
             return; // If already checked or flagged, do nothing
         }
+        if (hasMine)
+        {
+            switch (GridManager.Instance.tileType)
+            {
+                case GridManager.TileType.Hex:
+                    GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Mine];
+                    break;
+                case GridManager.TileType.Square:
+                    GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Mine];
+                    break;
+            }
+            GetComponent<Renderer>().material.color = Color.red; //Very scary oooooo
+            return; // If this tile has a mine, just reveal it and stop here
+        }
         GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles  
         if (value == 0)
         {
@@ -129,19 +143,7 @@ public class Tile : MonoBehaviour
                     neighbor.RevealTile(); // Recursively reveal neighboring tiles with value 0
                 }
             }
-        }
-        else if (hasMine)
-        {
-            switch (GridManager.Instance.tileType)
-            {
-                case GridManager.TileType.Hex:
-                    GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Mine];
-                    break;
-                case GridManager.TileType.Square:
-                    GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Mine];
-                    break;
-            }
-        }
+        }        
         else
         {
             switch(GridManager.Instance.tileType)

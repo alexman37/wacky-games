@@ -158,7 +158,7 @@ public class GridManager : MonoBehaviour
             //float hexSize = hexTile.GetComponent<HexagonMeshGenerator>().GetSize();            
             //float horizontalSpacing = hexSize * 1.5f + .1f; // Horizontal distance between hex centers
             //float verticalSpacing = hexSize * Mathf.Sqrt(3) + .1f; // Vertical distance between hex centers
-            float horizontalSpacing = 1.8f;
+            float horizontalSpacing = 1.25f;
             float verticalSpacing = 2.1f;
 
             // Generate a hexagonal grid
