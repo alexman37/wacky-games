@@ -76,7 +76,7 @@ public class GridManager : MonoBehaviour
         Grid = new Dictionary<Vector2Int, GameObject>();
         tilesWithMines = new List<GameObject>();
         checkedTiles = new List<Tile>();
-        Debug.Log("GridManager Start called. Generating grid.");
+        Debug.Log("GridManager Start called. Generating grid.");       
         Grid = GenerateGrid(RowCount, ColCount, MineCount);
         switch (tileType)
         {
@@ -108,6 +108,7 @@ public class GridManager : MonoBehaviour
                     GameObject tile = Instantiate(squareTile, worldPosition, Quaternion.identity);
                     tile.name = $"SquareTile_{row}_{col}";
                     tile.transform.parent = GridParent.transform;
+                    tile.transform.localRotation = Quaternion.Euler(90, 0, 0);
                     Grid[position] = tile;
                     Tile tileComponent = tile.GetComponent<Tile>();
                     tileComponent.coordinates = position;

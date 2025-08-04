@@ -26,11 +26,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_LocalRotation.z
@@ -38,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
@@ -46,7 +46,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       propertyPath: m_CastShadows
@@ -60,7 +60,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: HexTileSpacial
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -7511558181221131132, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
+    - {fileID: -5754084199372789682, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -70,6 +72,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
       insertIndex: -1
       addedObject: {fileID: -282262382061401160}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4968057710152435330}
   m_SourcePrefab: {fileID: 100100000, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
 --- !u!1 &3546543632980280661 stripped
 GameObject:
@@ -93,6 +98,32 @@ MonoBehaviour:
   flagged: 0
   revealed: 0
   value: 0
+  hexSprites:
+  - {fileID: 1813267638, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: 778598910, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: -1619370262, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: 1470018232, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: -663821621, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: -334885076, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: 1213333328, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: 401470144, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: 100354632, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: -1732274017, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: -624636669, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  - {fileID: -2048194657, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  squareSprites:
+  - {fileID: 21300000, guid: 5420591e3f7a8e54abdebd05937df625, type: 3}
+  - {fileID: 21845017, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: -1914679955, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: -721678944, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: 1383213371, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: 1479073263, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: 204632324, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: 37767619, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: 750429329, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: -1575801375, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: 1979878004, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
+  - {fileID: -1426813084, guid: c8d86cae7f3150b47a21897051cd4e38, type: 3}
 --- !u!64 &-282262382061401160
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -115,3 +146,58 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4575734979276873811, guid: ebc64ca36bc58544394b0109b2dc1ebb, type: 3}
+--- !u!212 &4968057710152435330
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3546543632980280661}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 1813267638, guid: 6d9664fe0e966b44b8bb8856694a49e0, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 1
+  m_DrawMode: 0
+  m_Size: {x: 4, y: 4.66}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0

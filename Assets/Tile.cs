@@ -19,11 +19,22 @@ public class Tile : MonoBehaviour
     public bool revealed = false;
     public int value = 0;
     public HashSet<Tile> adjacencies;
+    public List<Sprite> hexSprites; // List of sprites for hexagonal tiles
+    public List<Sprite> squareSprites; // List of sprites for square tiles
 
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("Tile created at coordinates: " + coordinates);
+        switch (GridManager.Instance.tileType)
+        {
+            case GridManager.TileType.Hex:
+                GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
+                break;
+            case GridManager.TileType.Square:
+                GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];
+                break;
+        }
     }
 
     // TODO: Instantiate the tile class with all tile variables
@@ -102,10 +113,15 @@ public class Tile : MonoBehaviour
         GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles  
         if (value == 0)
         {
-            // TODO - better styling options here
-            // Change color to green for revealed tile with value 0
-            //GetComponent<Renderer>().materials[1].mainTexture = GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_2").texture;
-            GetComponent<Renderer>().materials[1].color = Color.green;
+            switch(GridManager.Instance.tileType)
+            {
+                case GridManager.TileType.Hex:
+                    GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Revealed];
+                    break;
+                case GridManager.TileType.Square:
+                    GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Revealed];
+                    break;
+            }
             foreach (Tile neighbor in adjacencies)
             {
                 if (neighbor != null)
@@ -116,17 +132,47 @@ public class Tile : MonoBehaviour
         }
         else if (hasMine)
         {
-            // Do not reveal it if it has a mine.
+            switch (GridManager.Instance.tileType)
+            {
+                case GridManager.TileType.Hex:
+                    GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Mine];
+                    break;
+                case GridManager.TileType.Square:
+                    GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Mine];
+                    break;
+            }
         }
         else
         {
-            // TODO - better styling options
-            // Change color to yellow for revealed tile with a value > 0
-            //GetComponent<Renderer>().materials[1].mainTexture = GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_3").texture;
-            GetComponent<Renderer>().materials[1].color = Color.blue;
+            switch(GridManager.Instance.tileType)
+            {
+                case GridManager.TileType.Hex:
+                    GetComponent<SpriteRenderer>().sprite = hexSprites[getSpriteIndexForValue()];
+                    break;
+                case GridManager.TileType.Square:
+                    GetComponent<SpriteRenderer>().sprite = squareSprites[getSpriteIndexForValue()];
+                    break;
+            }
             return;
         }
 
+    }
+
+    int getSpriteIndexForValue()
+    {
+        switch (value)
+        {
+            case 0: return (int)SpriteIndex.Revealed;
+            case 1: return (int)SpriteIndex.Number1;
+            case 2: return (int)SpriteIndex.Number2;
+            case 3: return (int)SpriteIndex.Number3;
+            case 4: return (int)SpriteIndex.Number4;
+            case 5: return (int)SpriteIndex.Number5;
+            case 6: return (int)SpriteIndex.Number6;
+            case 7: return (int)SpriteIndex.Number7;
+            case 8: return (int)SpriteIndex.Number8;
+            default: return -1; // Invalid value
+        }
     }
 
     private void OnMouseOver()
@@ -151,13 +197,13 @@ public class Tile : MonoBehaviour
         if(!flagged && !revealed)
         {
             Debug.Log("Left click on tile at coordinates: " + coordinates);
+            
+            RevealTile();
             if (hasMine)
             {
-                GetComponent<Renderer>().materials[1].color = Color.red; // Change color to red for mine tile
                 Debug.Log("Game Over! You clicked on a mine at coordinates: " + coordinates);
                 return;
             }
-            RevealTile();
         }
     }
 
@@ -171,14 +217,30 @@ public class Tile : MonoBehaviour
             Debug.Log("Right click on tile at coordinates: " + coordinates);
             // Flag handling logic
             flagged = !flagged;
-            /*Material mat = GetComponent<Renderer>().materials[1];
-            Sprite spr = flagged ?
-                GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_1"):
-                GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_0");
-            mat.mainTexture = spr.texture;
-            mat.mainTextureOffset = UVToOffset(spr.uv);
-            mat.mainTextureScale = UVToScale(spr.uv);*/
-            GetComponent<Renderer>().materials[1].color = flagged ? Color.cyan : Color.gray;
+            if (flagged)
+            {
+                switch (GridManager.Instance.tileType)
+                {
+                    case GridManager.TileType.Hex:
+                        GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Flagged];
+                        break;
+                    case GridManager.TileType.Square:
+                        GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Flagged];
+                        break;
+                }
+            }
+            else
+            {
+                switch (GridManager.Instance.tileType)
+                {
+                    case GridManager.TileType.Hex:
+                        GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
+                        break;
+                    case GridManager.TileType.Square:
+                        GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];
+                        break;
+                }
+            }            
         }
     }
 
@@ -212,4 +274,7 @@ public class Tile : MonoBehaviour
         //  - If not, reveal its value
         //  - Cascading: If this tile has a value of '0' look for other neighboring tiles with a value of 0; reveal them and all their neighbors.
     }
+
+    enum SpriteIndex { Default = 0, Flagged = 1, Revealed = 2, Mine = 3, Number1 = 4, Number2 = 5, Number3 = 6, Number4 = 7, Number5 = 8, Number6 = 9, Number7 = 10, Number8 = 11 }
+
 }
