@@ -80,26 +80,6 @@ public class Tile : MonoBehaviour
         return count;
     }
 
-    // Subscribe to game events in OnEnable, unsubscribe in OnDisable
-    private void OnEnable()
-    {
-        GameEventsManager.changeTileClicking += EnableOrDisableClicks;
-        
-    }
-
-    private void OnDisable()
-    {
-        GameEventsManager.changeTileClicking -= EnableOrDisableClicks;
-    }
-
-    /// <summary>
-    /// Turn on / off clicking on tiles with game events
-    /// </summary>
-    private void EnableOrDisableClicks(bool enable)
-    {
-        
-    }
-
     /// <summary>
     /// Show the value of a tile
     /// </summary>
@@ -182,13 +162,13 @@ public class Tile : MonoBehaviour
 
     private void OnMouseOver()
     {
-        //Debug.Log("Mouse is over tile at coordinates: " + coordinates);
-        if (Input.GetMouseButtonDown(0))
+        // We only care about clicks if the game is active
+        if (Input.GetMouseButtonDown(0) && GameManager.instance.isAlive())
         {
             HandleLeftClick();
         }
         else
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && GameManager.instance.isAlive())
         {
             HandleRightClick();
         }
@@ -206,7 +186,7 @@ public class Tile : MonoBehaviour
             RevealTile();
             if (hasMine)
             {
-                Debug.Log("Game Over! You clicked on a mine at coordinates: " + coordinates);
+                GameEventsManager.instance.dispatch_gameLost();
                 return;
             }
         }
@@ -245,7 +225,8 @@ public class Tile : MonoBehaviour
                         GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];
                         break;
                 }
-            }            
+            }
+            GameEventsManager.instance.dispatch_flagged(flagged);
         }
     }
 

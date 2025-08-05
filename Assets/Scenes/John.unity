@@ -172,7 +172,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseTile: {fileID: 0}
   spriteAtlas: {fileID: 100100200, guid: fa2012a5862beb84087e5b90a8a5654d, type: 3}
-  deleteme: {fileID: 2139423766}
 --- !u!4 &53405407
 Transform:
   m_ObjectHideFlags: 0
@@ -732,6 +731,7 @@ RectTransform:
   m_Children:
   - {fileID: 2083147001}
   - {fileID: 555023186}
+  - {fileID: 1880060859}
   m_Father: {fileID: 1387673823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
@@ -808,6 +808,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b732c3e8fc124a4281523a1e1d49f88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  smiley: {fileID: 2053308056}
+  flagsRemaining: {fileID: 2059177448}
+  timeElapsed: {fileID: 299428445}
   shapeSelectGroup: {fileID: 802724608}
   rowsInput: 0
   colsInput: 0
@@ -2685,7 +2688,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 376631728}
-  - {fileID: 1880060859}
   - {fileID: 2139423765}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2856,17 +2858,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1880060858}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2086570995}
-  m_Father: {fileID: 1387673823}
+  m_Father: {fileID: 376631728}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 385, y: 184}
+  m_AnchoredPosition: {x: 385, y: -21}
   m_SizeDelta: {x: 210, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1880060860
@@ -2913,9 +2915,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 53405405}
-        m_TargetAssemblyTypeName: GridManager, Assembly-CSharp
-        m_MethodName: ButtonRegenGrid
+      - m_Target: {fileID: 376631732}
+        m_TargetAssemblyTypeName: TopBarUI, Assembly-CSharp
+        m_MethodName: kickoffRegen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

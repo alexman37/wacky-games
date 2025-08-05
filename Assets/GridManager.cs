@@ -43,10 +43,10 @@ public class GridManager : MonoBehaviour
     // Can we set up the grid to potentially work with non-rectangular, irregular shapes?
     void Update()
     {
-        if(UnityEngine.Input.GetKeyDown(KeyCode.R))
+        /*if(UnityEngine.Input.GetKeyDown(KeyCode.R))
         {            
             RegenerateGrid(tileType, RowCount, ColCount, MineCount);
-        }
+        }*/
         if(UnityEngine.Input.GetKeyDown(KeyCode.M))
         {
             if(tilesWithMines != null && showMines == false)
@@ -76,17 +76,16 @@ public class GridManager : MonoBehaviour
         Grid = new Dictionary<Vector2Int, GameObject>();
         tilesWithMines = new List<GameObject>();
         checkedTiles = new List<Tile>();
-        Debug.Log("GridManager Start called. Generating grid.");       
-        Grid = GenerateGrid(RowCount, ColCount, MineCount);
-        switch (tileType)
-        {
-            case TileType.Square:
-                CameraManager.Instance.SetPositionSquare();
-                break;
-            case TileType.Hex:
-                CameraManager.Instance.SetPositionHex();
-                break;
-        }
+    }
+
+    private void OnEnable()
+    {
+        
+    }
+
+    private void OnDisable()
+    {
+        
     }
 
     public Dictionary<Vector2Int, GameObject> GenerateGrid(int rowCount, int colCount, int mineCount)
@@ -317,6 +316,7 @@ public class GridManager : MonoBehaviour
 
         RegenerateGrid(selectedTileType, tb.rowsInput, tb.colsInput, tb.minesInput);
     }
+
     public void RegenerateGrid(TileType tileType, int rowCount, int columnCount, int mineCount)
     {
         showMines = false;

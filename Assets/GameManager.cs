@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     public Tile baseTile;
     public SpriteAtlas spriteAtlas;
 
-    public Image deleteme;
+    public RoundState state;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -23,14 +24,99 @@ public class GameManager : MonoBehaviour
         if(instance == null)
         {
             instance = this;
+            this.gameObject.AddComponent<GameEventsManager>();
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
         }
 
-        deleteme.sprite = GameManager.instance.spriteAtlas.GetSprite("hex minesweeper_1");
+        Debug.Log("Generating initial grid");
+        // TODO - be smarter about starting a game versus starting generation
+        resetState(100, 10);
+        GridManager.Instance.GenerateGrid(10, 10, 10);
     }
 
-    // Update is called once per frame
-    void Update()
+    // Subscriptions to events
+    private void OnEnable()
     {
-        
+        GameEventsManager.startNewGame += resetState;
+        GameEventsManager.revealedXtiles += revealedXTiles;
+        GameEventsManager.flagPlaced += flagPlacedOrRemoved;
+        GameEventsManager.gameWon += onWin;
+        GameEventsManager.gameLost += onLose;
+    }
+
+    private void OnDisable()
+    {
+        GameEventsManager.startNewGame -= resetState;
+        GameEventsManager.revealedXtiles -= revealedXTiles;
+        GameEventsManager.gameWon -= onWin;
+        GameEventsManager.gameLost -= onLose;
+    }
+
+
+    public bool isAlive()
+    {
+        return state.alive;
+    }
+
+
+
+    void resetState(int numTiles, int numMines)
+    {
+        state = new RoundState(numTiles, numMines);
+    }
+
+    // Assumes you didn't blow up and die
+    void revealedXTiles(int numRevealed)
+    {
+        state.numTilesRevealed += numRevealed;
+
+        // Win condition: You have revealed all the tiles that aren't mines
+        if(state.numTilesRevealed >= state.numTilesTotal - state.numMines)
+        {
+            GameEventsManager.instance.dispatch_gameWon();
+        }
+    }
+
+    void flagPlacedOrRemoved(bool placed)
+    {
+        if (placed) state.numFlagsPlaced += 1;
+        else state.numFlagsPlaced -= 1;
+        TopBarUI.instance.updateFlagDisplay(state.numFlagsPlaced, state.numMines);
+    }
+
+    void onWin()
+    {
+        // todo stats tracking?
+        Debug.Log("You won, yay!");
+        state.alive = true;
+    }
+
+    void onLose()
+    {
+        // todo stats tracking?
+        Debug.Log("You lost, boooo");
+        state.alive = false;
+    }
+}
+
+// Unique to each round
+public class RoundState
+{
+    public int numTilesTotal;
+    public int numMines;
+    public int numTilesRevealed;
+    public int numFlagsPlaced;
+    public bool alive;
+
+    public RoundState(int numTotal, int mines)
+    {
+        numTilesTotal = numTotal;
+        numMines = mines;
+        numTilesRevealed = 0;
+        numFlagsPlaced = 0;
+        alive = true;
     }
 }
