@@ -179,7 +179,27 @@ public class Tile : MonoBehaviour
     /// </summary>
     private void HandleLeftClick()
     {
-        if(!flagged && !revealed)
+        if (!GridManager.Instance.hasPlayerMadeFirstMove)
+        {
+            if (!flagged) // Haven't made a move yet (until now) and this tile isn't flagged
+            {
+                if (hasMine) //If we have a mine here, we need to put it elsewhere, and regenerate our neighboring values
+                {
+                    Debug.Log("We have a mine on the first move");
+                    hasMine = false; // Remove the mine from this tile
+                    Debug.Log("Replacing the first mine");
+                    GridManager.Instance.ReplaceFirstMine(this);
+                    Debug.Log("Recalculating tile values after first move");
+                    AssignValue();
+                    foreach(Tile tile in adjacencies)
+                    {
+                        tile.AssignValue(); // Recalculate the values of neighboring tiles
+                    }
+                }
+                GridManager.Instance.PlayerHasMadeFirstMove();
+            }
+        }
+        if (!flagged && !revealed)
         {
             Debug.Log("Left click on tile at coordinates: " + coordinates);
             
@@ -196,7 +216,7 @@ public class Tile : MonoBehaviour
     /// Flag only if the tile is still unknown.
     /// </summary>
     private void HandleRightClick()
-    {
+    {        
         if (!revealed)
         {
             Debug.Log("Right click on tile at coordinates: " + coordinates);

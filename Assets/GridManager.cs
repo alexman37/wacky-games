@@ -24,6 +24,7 @@ public class GridManager : MonoBehaviour
     public int ColCount;
     public int MineCount;
     private bool showMines = false; // Flag to control mine visibility
+    public bool hasPlayerMadeFirstMove { get; private set; } // Flag to check if the player has made the first move
 
     // Default tile spacing - could be made configurable
     #region Square Tile Spacing
@@ -76,6 +77,7 @@ public class GridManager : MonoBehaviour
         Grid = new Dictionary<Vector2Int, GameObject>();
         tilesWithMines = new List<GameObject>();
         checkedTiles = new List<Tile>();
+        hasPlayerMadeFirstMove = false; // Initialize the first move flag
     }
 
     private void OnEnable()
@@ -283,6 +285,39 @@ public class GridManager : MonoBehaviour
         CalculateTileValues();
     }
 
+    public void ReplaceFirstMine(Tile tileToReplace)
+    {
+        tilesWithMines.Remove(tileToReplace.gameObject); // Remove the old mine tile from the list
+        List<Vector2Int> positions = new List<Vector2Int>(Grid.Keys);
+        Vector2Int oldPosition = Vector2Int.RoundToInt(tileToReplace.coordinates); // Get the old position of the mine tile
+        positions.Remove(oldPosition); // Ensure this position is not selected again
+        Debug.Log($"Replacing mine at {oldPosition} with a new mine.");
+        // Shuffle positions of the mines by generating a random permutation
+        for (int i = positions.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            Vector2Int temp = positions[i];
+            positions[i] = positions[randomIndex];
+            positions[randomIndex] = temp;
+        }
+        for (int i = 0; i < positions.Count; i++)
+        {
+            GameObject tileObj = Grid[positions[i]];
+            Tile tile = tileObj.GetComponent<Tile>();
+            if (tile != null && !tile.hasMine)
+            {
+                tile.hasMine = true;
+                tile.AssignValue(); // Recalculate the value of this tile
+                foreach (Tile adj in tile.adjacencies)
+                {
+                    adj.AssignValue(); // Recalculate the values of adjacent tiles
+                }
+                tilesWithMines.Add(tileObj); // Add to the list of tiles with mines for debugging
+                break;
+            }
+        }
+    }
+
     public void CalculateTileValues()
     {
         foreach (var tileObj in Grid.Values)
@@ -296,6 +331,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
     public void DestroyAllChildren(GameObject parentObject)
     {
         // Iterate through the children in reverse order to avoid issues with hierarchy changes
@@ -320,6 +356,7 @@ public class GridManager : MonoBehaviour
     public void RegenerateGrid(TileType tileType, int rowCount, int columnCount, int mineCount)
     {
         showMines = false;
+        hasPlayerMadeFirstMove = false; // Reset the first move flag
         // Clear the existing grid
         Grid.Clear();
         tilesWithMines.Clear();
@@ -364,6 +401,11 @@ public class GridManager : MonoBehaviour
                     tileObj.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white;
             }
         }
+    }
+
+    public void PlayerHasMadeFirstMove()
+    {
+        hasPlayerMadeFirstMove = true; // Set the flag to true when the player makes their first move
     }
 
     public void DebugTileNeighbors(Vector2Int position)
