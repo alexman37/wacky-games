@@ -18,7 +18,7 @@ public class GridManager : MonoBehaviour
     public List<GameObject> tilesWithMines; // List to store tiles with mines for debugging
     public List<Tile> checkedTiles = new List<Tile>(); // List to keep track of checked tiles
 
-    [SerializeField] public TileType tileType = TileType.Square; // Default tile type
+    public TileType tileType = TileType.Square; // Default tile type
     private GameObject chosenTileType;
     public int RowCount;
     public int ColCount;
@@ -158,7 +158,7 @@ public class GridManager : MonoBehaviour
             //float hexSize = hexTile.GetComponent<HexagonMeshGenerator>().GetSize();            
             //float horizontalSpacing = hexSize * 1.5f + .1f; // Horizontal distance between hex centers
             //float verticalSpacing = hexSize * Mathf.Sqrt(3) + .1f; // Vertical distance between hex centers
-            float horizontalSpacing = 1.25f;
+            float horizontalSpacing = 1.75f;
             float verticalSpacing = 2.1f;
 
             // Generate a hexagonal grid
@@ -310,11 +310,15 @@ public class GridManager : MonoBehaviour
     public void ButtonRegenGrid()
     {
         DestroyAllChildren(GridParent);
-        RegenerateGrid(tileType, RowCount, ColCount, MineCount);
+        //RegenerateGrid(tileType, RowCount, ColCount, MineCount);
+        TopBarUI tb = TopBarUI.instance;
+        TileType selectedTileType = (TileType) tb.shapeSelectGroup.currSelected;
+        tileType = selectedTileType;
+
+        RegenerateGrid(selectedTileType, tb.rowsInput, tb.colsInput, tb.minesInput);
     }
     public void RegenerateGrid(TileType tileType, int rowCount, int columnCount, int mineCount)
     {
-        HideMines();
         showMines = false;
         // Clear the existing grid
         Grid.Clear();
@@ -327,6 +331,7 @@ public class GridManager : MonoBehaviour
         chosenTileType = tileType == TileType.Square ? squareTile : hexTile;
         // Generate the new grid
         GenerateGrid(rowCount,columnCount,mineCount);
+        HideMines();
     }
 
     public void ShowMines()
@@ -337,7 +342,10 @@ public class GridManager : MonoBehaviour
             if (tile != null && tile.hasMine)
             {
                 // Show the mine as red tile.
-                tileObj.GetComponent<Renderer>().material.color = Color.red;
+                if (tileType == TileType.Square)
+                    tileObj.GetComponent<Renderer>().material.color = Color.red;
+                else if (tileType == TileType.Hex)
+                    tileObj.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
             }
         }
     }
@@ -350,7 +358,10 @@ public class GridManager : MonoBehaviour
             if (tile != null && tile.hasMine)
             {
                 // Show the mine as red tile.
-                tileObj.GetComponent<Renderer>().material.color = Color.white;
+                if(tileType == TileType.Square)
+                    tileObj.GetComponent<Renderer>().material.color = Color.white;
+                else if(tileType == TileType.Hex)
+                    tileObj.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.white;
             }
         }
     }

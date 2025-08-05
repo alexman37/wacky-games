@@ -29,7 +29,7 @@ public class Tile : MonoBehaviour
         switch (GridManager.Instance.tileType)
         {
             case GridManager.TileType.Hex:
-                GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
+                transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
                 break;
             case GridManager.TileType.Square:
                 GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];
@@ -114,14 +114,17 @@ public class Tile : MonoBehaviour
         {
             switch (GridManager.Instance.tileType)
             {
+                // Switch sprite to mine and change color to red (Very scary oooooo)
                 case GridManager.TileType.Hex:
-                    GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Mine];
+                    transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Mine];
+                    transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
                     break;
                 case GridManager.TileType.Square:
                     GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Mine];
+                    GetComponent<Renderer>().material.color = Color.red;
                     break;
             }
-            GetComponent<Renderer>().material.color = Color.red; //Very scary oooooo
+            
             return; // If this tile has a mine, just reveal it and stop here
         }
         GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles  
@@ -130,7 +133,7 @@ public class Tile : MonoBehaviour
             switch(GridManager.Instance.tileType)
             {
                 case GridManager.TileType.Hex:
-                    GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Revealed];
+                    transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Revealed];
                     break;
                 case GridManager.TileType.Square:
                     GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Revealed];
@@ -149,7 +152,7 @@ public class Tile : MonoBehaviour
             switch(GridManager.Instance.tileType)
             {
                 case GridManager.TileType.Hex:
-                    GetComponent<SpriteRenderer>().sprite = hexSprites[getSpriteIndexForValue()];
+                    transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[getSpriteIndexForValue()];
                     break;
                 case GridManager.TileType.Square:
                     GetComponent<SpriteRenderer>().sprite = squareSprites[getSpriteIndexForValue()];
@@ -224,7 +227,7 @@ public class Tile : MonoBehaviour
                 switch (GridManager.Instance.tileType)
                 {
                     case GridManager.TileType.Hex:
-                        GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Flagged];
+                        transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Flagged];
                         break;
                     case GridManager.TileType.Square:
                         GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Flagged];
@@ -236,7 +239,7 @@ public class Tile : MonoBehaviour
                 switch (GridManager.Instance.tileType)
                 {
                     case GridManager.TileType.Hex:
-                        GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
+                        transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
                         break;
                     case GridManager.TileType.Square:
                         GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];

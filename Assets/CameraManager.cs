@@ -73,12 +73,12 @@ public class CameraManager : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x + LeftRightSpeed, transform.position.y, transform.position.z);
         }
-        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
+        if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y + ScrollSpeed, transform.position.z);
 
         }
-        if (Input.GetAxisRaw("Mouse ScrollWheel") < 0)
+        if (Input.GetAxisRaw("Mouse ScrollWheel") > 0)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y - ScrollSpeed, transform.position.z);
 
