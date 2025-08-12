@@ -72,7 +72,6 @@ namespace Games.Minesweeper
             {
                 Destroy(gameObject);
             }
-            Grid = new Dictionary<Vector2Int, GameObject>();
             tilesWithMines = new List<GameObject>();
             checkedTiles = new List<Tile>();
             hasPlayerMadeFirstMove = false; // Initialize the first move flag
@@ -90,6 +89,9 @@ namespace Games.Minesweeper
 
         public Dictionary<Vector2Int, GameObject> GenerateGrid(int rowCount, int colCount, int mineCount)
         {
+            // TODO smarter waiting for this component to finish creating
+            if(Grid == null) Grid = new Dictionary<Vector2Int, GameObject>();
+
             if (tileType == TileType.Square)
             {
                 Debug.Log("Generating square grid with " + rowCount + " rows and " + colCount + " columns.");
@@ -240,7 +242,8 @@ namespace Games.Minesweeper
                     }
                 }
                 PlaceMinesRandomly(mineCount);
-                CameraManager.Instance.SetPositionHex();
+                // TODO smarter creation at start
+                //CameraManager.Instance.SetPositionHex();
                 return Grid;
             }
             return null;

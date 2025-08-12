@@ -37,6 +37,39 @@ namespace Games.Minesweeper
             }
         }
 
+        private void OnEnable()
+        {
+            MinesweeperStyles.newStyleSheetLoaded += changeTileStyle;
+        }
+
+        private void OnDisable()
+        {
+            MinesweeperStyles.newStyleSheetLoaded += changeTileStyle;
+        }
+
+        private void changeTileStyle()
+        {
+            Sprite spr = null;
+            if (revealed)
+            {
+                if (hasMine) spr = MinesweeperStyles.instance.getMineSprite();
+                else spr = MinesweeperStyles.instance.getNumberedSprite(value);
+            }
+            else if (flagged) spr = MinesweeperStyles.instance.getFlaggedSprite();
+            else spr = MinesweeperStyles.instance.getUnclickedSprite();
+
+
+            switch (GridManager.Instance.tileType)
+                {
+                    case GridManager.TileType.Hex:
+                        transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = spr;
+                        break;
+                    case GridManager.TileType.Square:
+                        GetComponent<SpriteRenderer>().sprite = spr;
+                        break;
+                }
+        }
+
         // TODO: Instantiate the tile class with all tile variables
         public Tile()
         {

@@ -1,0 +1,25 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.54f1
+CRC: 419807031
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f961970d7552ff4f3c2aefb033f47561
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 09f72e36251c50f6e8d6a67bdac0d8d0
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 9cbacf02e83b28251955a7871b683dc4
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 687078895
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/hex greensweeper.png
+Dependencies: []

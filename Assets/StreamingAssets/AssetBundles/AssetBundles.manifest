@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.54f1
+CRC: 3400008126
+HashAppended: 0
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: minesweeper/style/square/base
+      Dependencies: {}
+    Info_1:
+      Name: minesweeper/style/square/green
+      Dependencies: {}
+    Info_2:
+      Name: minesweeper/style/hex/green
+      Dependencies: {}
+    Info_3:
+      Name: minesweeper/style/hex/base
+      Dependencies: {}

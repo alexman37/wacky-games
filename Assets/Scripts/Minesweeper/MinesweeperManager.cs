@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.U2D;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Games.Minesweeper
 {
@@ -34,6 +36,8 @@ namespace Games.Minesweeper
             // TODO - be smarter about starting a game versus starting generation
             resetState(100, 10);
             GridManager.Instance.GenerateGrid(10, 10, 10);
+
+            // TODO set initial sprite sheet
         }
 
         // Subscriptions to events
