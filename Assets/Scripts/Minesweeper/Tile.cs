@@ -195,6 +195,11 @@ namespace Games.Minesweeper
 
         private void OnMouseOver()
         {
+            // Some UI event is preventing clicks, so we don't do anything.
+            if (!GridManager.Instance.canPlayerClick)
+            {
+                return;
+            }
             // We only care about clicks if the game is active
             if (Input.GetMouseButtonDown(0) && MinesweeperManager.instance.isAlive())
             {

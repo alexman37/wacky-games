@@ -4,5 +4,15 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/IntroScreen.unity
+    guid: 56a9ee185f5886d48b7dc28c5efcffe0
+  - enabled: 1
+    path: Assets/Scenes/SelectGameScreen.unity
+    guid: e72cf6d253d21024aa680b380f7bcf8e
+  - enabled: 1
+    path: Assets/Scenes/Minesweeper.unity
+    guid: 627d13be56bd6b745aa06829eb7af898
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

@@ -23,6 +23,7 @@ namespace Games.Minesweeper
         public int MineCount;
         private bool showMines = false; // Flag to control mine visibility
         public bool hasPlayerMadeFirstMove { get; private set; } // Flag to check if the player has made the first move
+        public bool canPlayerClick { get; private set; } = true; // Flag to control if the player can click tiles. Useful for UI interactions.
 
         // Default tile spacing - could be made configurable
         #region Square Tile Spacing
@@ -77,6 +78,16 @@ namespace Games.Minesweeper
             hasPlayerMadeFirstMove = false; // Initialize the first move flag
         }
 
+        // For UI interactions, we can enable or disable player clicks
+        public void EnablePlayerMovement()
+        {
+            canPlayerClick = true; // Enable player clicks
+        }
+        public void DisablePlayerMovement()
+        {
+            canPlayerClick = false; // Disable player clicks
+        }
+
         private void OnEnable()
         {
 
@@ -89,8 +100,9 @@ namespace Games.Minesweeper
 
         public Dictionary<Vector2Int, GameObject> GenerateGrid(int rowCount, int colCount, int mineCount)
         {
+            canPlayerClick = true; // Allow player to click tiles when generating a new grid
             // TODO smarter waiting for this component to finish creating
-            if(Grid == null) Grid = new Dictionary<Vector2Int, GameObject>();
+            if (Grid == null) Grid = new Dictionary<Vector2Int, GameObject>();
 
             if (tileType == TileType.Square)
             {
@@ -345,6 +357,7 @@ namespace Games.Minesweeper
 
         public void ButtonRegenGrid()
         {
+            canPlayerClick = false; // Disable player clicks while regenerating the grid
             DestroyAllChildren(GridParent);
             //RegenerateGrid(tileType, RowCount, ColCount, MineCount);
             MinesweeperTopBarUI tb = MinesweeperTopBarUI.instance;

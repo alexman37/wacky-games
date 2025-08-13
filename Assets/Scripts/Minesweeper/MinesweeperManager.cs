@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.U2D;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 namespace Games.Minesweeper
 {
@@ -17,7 +18,7 @@ namespace Games.Minesweeper
         public SpriteAtlas spriteAtlas;
 
         public RoundState state;
-
+        public GameObject leaveGameWarningPanel;
 
         // Start is called before the first frame update
         void Start()
@@ -102,6 +103,25 @@ namespace Games.Minesweeper
             // todo stats tracking?
             Debug.Log("You lost, boooo");
             state.alive = false;
+        }
+
+        // Called by the leave game button to return you to the select game scene.
+        // Maybe it should warn you first?
+        public void leaveGameClicked()
+        {
+            leaveGameWarningPanel.SetActive(true);
+            GridManager.Instance.DisablePlayerMovement();
+        }
+
+        public void playerWantsToKeepTrying()
+        {
+            leaveGameWarningPanel.SetActive(false);
+            GridManager.Instance.EnablePlayerMovement();
+        }
+
+        public void trulyLeaveGame()
+        {
+            SceneManager.LoadScene("SelectGameScreen");
         }
     }
 
