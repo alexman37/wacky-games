@@ -14,9 +14,6 @@ namespace Games.Minesweeper
     {
         public static MinesweeperManager instance;
 
-        public Tile baseTile;
-        public SpriteAtlas spriteAtlas;
-
         public RoundState state;
         public GameObject leaveGameWarningPanel;
 

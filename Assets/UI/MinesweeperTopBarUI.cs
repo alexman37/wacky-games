@@ -183,7 +183,7 @@ namespace Games.Minesweeper
                     styleSelectGroup.gameObject.transform.GetChild(i).gameObject.SetActive(true);
                     styleSelectGroup.gameObject.transform.GetChild(i).GetComponent<Image>().sprite = sprites[i];
                 }
-                for (; i < sprites.Length; i++)
+                for (; i < 12; i++)
                 {
                     styleSelectGroup.gameObject.transform.GetChild(i).gameObject.SetActive(false);
                 }
@@ -194,6 +194,7 @@ namespace Games.Minesweeper
         public void styleSelectCallback(int index)
         {
             Debug.Log("Changed style to " + index);
+
             string styleName = "", shapeName = "";
             switch(currShape)
             {
@@ -206,7 +207,7 @@ namespace Games.Minesweeper
             }
 
             // If a style of the same shape is selected, start using that shape immediately
-            if((int) GridManager.Instance.tileType == currShape)
+            if ((int) GridManager.Instance.tileType == currShape)
             {
                 MinesweeperStyles.instance.useNewStyleSheet(shapeName, styleName);
             } 

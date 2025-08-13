@@ -18,8 +18,8 @@ namespace Games.Minesweeper
         public static event Action newStyleSheetLoaded;
 
         // according to asset bundle names to look for.
-        public string[] squareStyleNames = {"base", "green"};
-        public string[] hexStyleNames = {"base", "green" };
+        [System.NonSerialized] public string[] squareStyleNames = {"base", "green", "purple", "gold", "orange", "storm" };
+        [System.NonSerialized] public string[] hexStyleNames = {"base", "green", "purple", "gold", "orange", "storm" };
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()

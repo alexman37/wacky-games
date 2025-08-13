@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.54f1
+CRC: 413500951
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: bc0b832fc12b46a662f0e73c4a761594
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9f349c36d7a6532f767333f9299b3e74
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 723f0380572a46f899e1971017df3992
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Sprites/aftonsweeper.png
+Dependencies: []

@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.54f1
+CRC: 3570984492
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 732c8b6458720040a917428a05cda2be
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9f349c36d7a6532f767333f9299b3e74
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: afc33cd51102844b2305eacb25fb4adb
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Sprites/hex stormsweeper.png
+Dependencies: []

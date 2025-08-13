@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.54f1
+CRC: 4214514102
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 492ba4042081b1f1244ffe21c548829c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9f349c36d7a6532f767333f9299b3e74
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 03a009422a46dba47c2eb9cea91cb227
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Sprites/orangesweeper.png
+Dependencies: []

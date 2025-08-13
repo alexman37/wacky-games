@@ -1,6 +1,6 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.0.54f1
-CRC: 1195536001
+CRC: 938598440
 HashAppended: 0
 AssetBundleManifest:
   AssetBundleInfos:
@@ -21,4 +21,28 @@ AssetBundleManifest:
       Dependencies: {}
     Info_5:
       Name: minesweeper/style-viz/square
+      Dependencies: {}
+    Info_6:
+      Name: minesweeper/style/square/purple
+      Dependencies: {}
+    Info_7:
+      Name: minesweeper/style/square/gold
+      Dependencies: {}
+    Info_8:
+      Name: minesweeper/style/square/orange
+      Dependencies: {}
+    Info_9:
+      Name: minesweeper/style/square/storm
+      Dependencies: {}
+    Info_10:
+      Name: minesweeper/style/hex/purple
+      Dependencies: {}
+    Info_11:
+      Name: minesweeper/style/hex/gold
+      Dependencies: {}
+    Info_12:
+      Name: minesweeper/style/hex/orange
+      Dependencies: {}
+    Info_13:
+      Name: minesweeper/style/hex/storm
       Dependencies: {}

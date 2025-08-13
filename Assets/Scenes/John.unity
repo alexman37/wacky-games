@@ -172,6 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseTile: {fileID: 0}
   spriteAtlas: {fileID: 100100200, guid: fa2012a5862beb84087e5b90a8a5654d, type: 3}
+  leaveGameWarningPanel: {fileID: 0}
 --- !u!4 &53405407
 Transform:
   m_ObjectHideFlags: 0

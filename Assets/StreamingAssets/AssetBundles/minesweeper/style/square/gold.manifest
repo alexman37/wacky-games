@@ -1,0 +1,23 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.54f1
+CRC: 701794532
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 8d071027afa5ee4b292e8bf82cd482b5
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9f349c36d7a6532f767333f9299b3e74
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 0e440725e7ad87a383e72d7cfaa8eab3
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Sprites/goldsweeper.png
+Dependencies: []
