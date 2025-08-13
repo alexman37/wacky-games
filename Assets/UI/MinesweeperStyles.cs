@@ -8,16 +8,28 @@ namespace Games.Minesweeper
     public class MinesweeperStyles : MonoBehaviour
     {
         public static MinesweeperStyles instance;
+        public static bool greenlight = false;
 
         private MinesweeperStyleSheet activeStyleSheet;
+        private MinesweeperStyleSheet nextStyleSheet; // TODO: better way to do this??? there must be.
+                                                      // need some way to track what style sheet is desired without actually changing it for tiles
+                                                      // for ex, if you change the shape completely, you won't change the style sheet in-game.
 
         public static event Action newStyleSheetLoaded;
+
+        // according to asset bundle names to look for.
+        public string[] squareStyleNames = {"base", "green"};
+        public string[] hexStyleNames = {"base", "green" };
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             if (instance == null) instance = this;
             else if (instance != this) Destroy(gameObject);
+
+            newStyleSheetLoaded += () => { };
+
+            // Initial sprite sheet is actually set in TopBarUI
         }
 
 
@@ -43,9 +55,20 @@ namespace Games.Minesweeper
         }
 
 
+        // On grid regeneration, use the next style sheet
+        public void useNextStyle()
+        {
+            if(nextStyleSheet != null)
+            {
+                activeStyleSheet = nextStyleSheet;
+                newStyleSheetLoaded.Invoke();
+                nextStyleSheet = null;
+            }
+        }
 
-        // All style sheets should follow the same layout
-        public static void loadNewStyleSheet(Sprite[] sprites)
+
+        // Generic style sheet load
+        private static MinesweeperStyleSheet instantiateNewStyleSheetFromSprites(Sprite[] sprites)
         {
             MinesweeperStyleSheet sheet = new MinesweeperStyleSheet();
             sheet.unclicked = sprites[0];
@@ -64,28 +87,44 @@ namespace Games.Minesweeper
                 sheet.smileys[i - 12] = sprites[i];
             }
 
-            instance.activeStyleSheet = sheet;
-
-            newStyleSheetLoaded.Invoke();
+            return sheet;
         }
 
-        private void Update()
-        {
-            if(Input.GetKeyDown(KeyCode.Q))
+        // Change tile sheet now:
+            public static void loadNewStyleSheet(Sprite[] sprites)
             {
-                StartCoroutine(loadSpriteSheets("minesweeper/style/hex/base"));
+                MinesweeperStyleSheet sheet = instantiateNewStyleSheetFromSprites(sprites);
+                instance.activeStyleSheet = sheet;
+                newStyleSheetLoaded.Invoke();
             }
 
-            if (Input.GetKeyDown(KeyCode.E))
+            public void useNewStyleSheet(string shape, string style)
             {
-                StartCoroutine(loadSpriteSheets("minesweeper/style/hex/green"));
+                StartCoroutine(loadSpriteSheets($"minesweeper/style/{shape}/{style}"));
             }
-        }
 
-        IEnumerator loadSpriteSheets(string path)
-        {
-            yield return LoadAssetBundle.LoadBundle<Sprite>(path, loadNewStyleSheet);
-        }
+            IEnumerator loadSpriteSheets(string path)
+            {
+                yield return LoadAssetBundle.LoadBundle<Sprite>(path, loadNewStyleSheet);
+                greenlight = true;
+            }
+
+        // Change queued tile sheet:
+            private static void NEXT_loadNewStyleSheet(Sprite[] sprites)
+            {
+                MinesweeperStyleSheet sheet = instantiateNewStyleSheetFromSprites(sprites);
+                instance.nextStyleSheet = sheet;
+            }
+
+            public void NEXT_useNewStyleSheet(string shape, string style)
+            {
+                StartCoroutine(NEXT_loadSpriteSheets($"minesweeper/style/{shape}/{style}"));
+            }
+
+            IEnumerator NEXT_loadSpriteSheets(string path)
+            {
+                yield return LoadAssetBundle.LoadBundle<Sprite>(path, NEXT_loadNewStyleSheet);
+            }
     }
 
 

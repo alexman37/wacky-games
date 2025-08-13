@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.0.54f1
-CRC: 2811695858
+CRC: 3784579363
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f91de5fc3b57d60b10b6cf2a07708bec
+    Hash: 7a7cc6b6565f86800a3c1098aaee828d
   TypeTreeHash:
     serializedVersion: 2
     Hash: 09f72e36251c50f6e8d6a67bdac0d8d0
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: a4d3d9d02990b29503bc5a3c8896932d
+    Hash: 0513be68565fb89d89841cc752738ae2
 HashAppended: 0
 ClassTypes:
 - Class: 28
@@ -21,5 +21,5 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/minesweeper.png
+- Assets/Sprites/minesweeper.png
 Dependencies: []

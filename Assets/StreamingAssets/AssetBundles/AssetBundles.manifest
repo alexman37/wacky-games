@@ -1,6 +1,6 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.0.54f1
-CRC: 3400008126
+CRC: 1195536001
 HashAppended: 0
 AssetBundleManifest:
   AssetBundleInfos:
@@ -15,4 +15,10 @@ AssetBundleManifest:
       Dependencies: {}
     Info_3:
       Name: minesweeper/style/hex/base
+      Dependencies: {}
+    Info_4:
+      Name: minesweeper/style-viz/hex
+      Dependencies: {}
+    Info_5:
+      Name: minesweeper/style-viz/square
       Dependencies: {}

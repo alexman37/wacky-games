@@ -33,12 +33,22 @@ namespace Games.Minesweeper
                 Destroy(gameObject);
             }
 
-            Debug.Log("Generating initial grid");
-            // TODO - be smarter about starting a game versus starting generation
+            StartCoroutine(startupRoutine());
+        }
+
+        // Wait for start methods of all essential scripts to finish creating before we begin the game.
+        IEnumerator startupRoutine()
+        {
+            while(!MinesweeperStyles.greenlight ||
+                !MinesweeperTopBarUI.greenlight ||
+                !GridManager.greenlight)
+            {
+                yield return null;
+            }
+
+            Debug.Log("All services started - beginning game!");
             resetState(100, 10);
             GridManager.Instance.GenerateGrid(10, 10, 10);
-
-            // TODO set initial sprite sheet
         }
 
         // Subscriptions to events

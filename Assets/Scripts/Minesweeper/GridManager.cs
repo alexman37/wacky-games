@@ -9,6 +9,8 @@ namespace Games.Minesweeper
     /// </summary>
     public class GridManager : MonoBehaviour
     {
+        public static bool greenlight = false;
+
         public Dictionary<Vector2Int, GameObject> Grid { get; private set; }
         public GameObject squareTile;
         public GameObject hexTile;
@@ -16,8 +18,7 @@ namespace Games.Minesweeper
         public List<GameObject> tilesWithMines; // List to store tiles with mines for debugging
         public List<Tile> checkedTiles = new List<Tile>(); // List to keep track of checked tiles
 
-        public TileType tileType = TileType.Square; // Default tile type
-        private GameObject chosenTileType;
+        public TileType tileType; // Default tile type
         public int RowCount;
         public int ColCount;
         public int MineCount;
@@ -76,6 +77,8 @@ namespace Games.Minesweeper
             tilesWithMines = new List<GameObject>();
             checkedTiles = new List<Tile>();
             hasPlayerMadeFirstMove = false; // Initialize the first move flag
+
+            greenlight = true;
         }
 
         // For UI interactions, we can enable or disable player clicks
@@ -378,8 +381,10 @@ namespace Games.Minesweeper
             RowCount = rowCount;
             ColCount = columnCount;
             MineCount = mineCount;
-            // Choose the tile type based on the parameter
-            chosenTileType = tileType == TileType.Square ? squareTile : hexTile;
+
+            // Use queued style
+            MinesweeperStyles.instance.useNextStyle();
+
             // Generate the new grid
             GenerateGrid(rowCount, columnCount, mineCount);
             HideMines();

@@ -19,22 +19,12 @@ namespace Games.Minesweeper
         public bool revealed = false;
         public int value = 0;
         public HashSet<Tile> adjacencies;
-        public List<Sprite> hexSprites; // List of sprites for hexagonal tiles
-        public List<Sprite> squareSprites; // List of sprites for square tiles
 
         // Start is called before the first frame update
         void Start()
         {
             Debug.Log("Tile created at coordinates: " + coordinates);
-            switch (GridManager.Instance.tileType)
-            {
-                case GridManager.TileType.Hex:
-                    transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
-                    break;
-                case GridManager.TileType.Square:
-                    GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];
-                    break;
-            }
+            changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
         }
 
         private void OnEnable()
@@ -44,7 +34,7 @@ namespace Games.Minesweeper
 
         private void OnDisable()
         {
-            MinesweeperStyles.newStyleSheetLoaded += changeTileStyle;
+            MinesweeperStyles.newStyleSheetLoaded -= changeTileStyle;
         }
 
         private void changeTileStyle()
@@ -125,15 +115,16 @@ namespace Games.Minesweeper
             }
             if (hasMine)
             {
+                // Switch sprite to mine
+                changeSpriteTo(MinesweeperStyles.instance.getMineSprite());
+
+                // and change color to red (Very scary oooooo)
                 switch (GridManager.Instance.tileType)
                 {
-                    // Switch sprite to mine and change color to red (Very scary oooooo)
                     case GridManager.TileType.Hex:
-                        transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Mine];
                         transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
                         break;
                     case GridManager.TileType.Square:
-                        GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Mine];
                         GetComponent<Renderer>().material.color = Color.red;
                         break;
                 }
@@ -143,15 +134,7 @@ namespace Games.Minesweeper
             GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles  
             if (value == 0)
             {
-                switch (GridManager.Instance.tileType)
-                {
-                    case GridManager.TileType.Hex:
-                        transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Revealed];
-                        break;
-                    case GridManager.TileType.Square:
-                        GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Revealed];
-                        break;
-                }
+                changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(0));
                 foreach (Tile neighbor in adjacencies)
                 {
                     if (neighbor != null)
@@ -162,35 +145,10 @@ namespace Games.Minesweeper
             }
             else
             {
-                switch (GridManager.Instance.tileType)
-                {
-                    case GridManager.TileType.Hex:
-                        transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[getSpriteIndexForValue()];
-                        break;
-                    case GridManager.TileType.Square:
-                        GetComponent<SpriteRenderer>().sprite = squareSprites[getSpriteIndexForValue()];
-                        break;
-                }
+                changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(value));
                 return;
             }
 
-        }
-
-        int getSpriteIndexForValue()
-        {
-            switch (value)
-            {
-                case 0: return (int)SpriteIndex.Revealed;
-                case 1: return (int)SpriteIndex.Number1;
-                case 2: return (int)SpriteIndex.Number2;
-                case 3: return (int)SpriteIndex.Number3;
-                case 4: return (int)SpriteIndex.Number4;
-                case 5: return (int)SpriteIndex.Number5;
-                case 6: return (int)SpriteIndex.Number6;
-                case 7: return (int)SpriteIndex.Number7;
-                case 8: return (int)SpriteIndex.Number8;
-                default: return -1; // Invalid value
-            }
         }
 
         private void OnMouseOver()
@@ -262,29 +220,27 @@ namespace Games.Minesweeper
                 flagged = !flagged;
                 if (flagged)
                 {
-                    switch (GridManager.Instance.tileType)
-                    {
-                        case GridManager.TileType.Hex:
-                            transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Flagged];
-                            break;
-                        case GridManager.TileType.Square:
-                            GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Flagged];
-                            break;
-                    }
+                    changeSpriteTo(MinesweeperStyles.instance.getFlaggedSprite());
                 }
                 else
                 {
-                    switch (GridManager.Instance.tileType)
-                    {
-                        case GridManager.TileType.Hex:
-                            transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = hexSprites[(int)SpriteIndex.Default];
-                            break;
-                        case GridManager.TileType.Square:
-                            GetComponent<SpriteRenderer>().sprite = squareSprites[(int)SpriteIndex.Default];
-                            break;
-                    }
+                    changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
                 }
                 MinesweeperEventsManager.instance.dispatch_flagged(flagged);
+            }
+        }
+
+        // Location of the sprite differs for different shapes
+        private void changeSpriteTo(Sprite spr)
+        {
+            switch (GridManager.Instance.tileType)
+            {
+                case GridManager.TileType.Hex:
+                    transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = spr;
+                    break;
+                case GridManager.TileType.Square:
+                    GetComponent<SpriteRenderer>().sprite = spr;
+                    break;
             }
         }
 
@@ -318,9 +274,6 @@ namespace Games.Minesweeper
             //  - If not, reveal its value
             //  - Cascading: If this tile has a value of '0' look for other neighboring tiles with a value of 0; reveal them and all their neighbors.
         }
-
-        enum SpriteIndex { Default = 0, Flagged = 1, Revealed = 2, Mine = 3, Number1 = 4, Number2 = 5, Number3 = 6, Number4 = 7, Number5 = 8, Number6 = 9, Number7 = 10, Number8 = 11 }
-
     }
 
 }

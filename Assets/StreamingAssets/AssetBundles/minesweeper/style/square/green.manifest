@@ -1,16 +1,16 @@
 ManifestFileVersion: 0
 UnityVersion: 6000.0.54f1
-CRC: 3691779824
+CRC: 2942165951
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 7b99a64e39a46836c0af06305ad186ef
+    Hash: 435e776813fde56f76735d1399515ccc
   TypeTreeHash:
     serializedVersion: 2
     Hash: 09f72e36251c50f6e8d6a67bdac0d8d0
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: a98a2ee289e14985beb5ee91f5736e87
+    Hash: d2a2a0674381089c46c9fc3a6f6cf5d1
 HashAppended: 0
 ClassTypes:
 - Class: 28
@@ -21,5 +21,5 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/greensweeper.png
+- Assets/Sprites/greensweeper.png
 Dependencies: []
