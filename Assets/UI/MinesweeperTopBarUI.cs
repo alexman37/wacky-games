@@ -25,7 +25,7 @@ namespace Games.Minesweeper
 
         // shape select
         public ButtonGroup shapeSelectGroup;
-        private int currShape;
+        private int currShape = 0;
         private static bool initialLoad = true; // needed to prevent shape/style groups from loading the same asset at the start
 
         // row, col, mine input
@@ -40,6 +40,11 @@ namespace Games.Minesweeper
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
+            StartCoroutine(startupRoutine());
+        }
+
+        IEnumerator startupRoutine()
+        {
             if (instance == null) instance = this;
             else if (instance != this) Destroy(gameObject);
 
@@ -47,14 +52,19 @@ namespace Games.Minesweeper
             colsInput = 10;
             minesInput = 10;
 
+            yield return new WaitUntil(() => GridManager.greenlight == true);
+            //yield return null;
+
             // Define callbacks for shape and style selection.
             shapeSelectGroup.selectedIndexEvent = shapeSelectCallback;
             shapeSelectGroup.setInitialValue();
+            currShape = shapeSelectGroup.defaultChoice;
 
             styleSelectGroup.selectedIndexEvent = styleSelectCallback;
             styleSelectGroup.setInitialValue();
 
             greenlight = true;
+            Debug.Log("Greenlit topbar");
         }
 
         private void OnEnable()

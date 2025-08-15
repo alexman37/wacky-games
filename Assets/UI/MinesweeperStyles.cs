@@ -107,6 +107,7 @@ namespace Games.Minesweeper
             {
                 yield return LoadAssetBundle.LoadBundle<Sprite>(path, loadNewStyleSheet);
                 greenlight = true;
+                Debug.Log("Greenlit styles");
             }
 
         // Change queued tile sheet:

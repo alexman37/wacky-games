@@ -79,6 +79,7 @@ namespace Games.Minesweeper
             hasPlayerMadeFirstMove = false; // Initialize the first move flag
 
             greenlight = true;
+            Debug.Log("Greenlit grid");
         }
 
         // For UI interactions, we can enable or disable player clicks
