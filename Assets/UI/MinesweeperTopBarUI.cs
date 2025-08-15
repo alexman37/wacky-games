@@ -89,21 +89,28 @@ namespace Games.Minesweeper
         private void winDisplay()
         {
             flagsRemaining.text = "You won :)";
+            // Also: stop the timer
+            StopCoroutine(timingCoroutine);
         }
 
         private void lossDisplay()
         {
             flagsRemaining.text = "You lost :(";
+            // Also: stop the timer
+            StopCoroutine(timingCoroutine);
         }
 
 
 
         private IEnumerator trackTime()
         {
-            string formatted = $"{timeSeconds / 60}:" + ((timeSeconds % 60) > 9 ? timeSeconds % 60 : "0" + (timeSeconds % 60));
-            timeElapsed.text = formatted;
-            yield return new WaitForSeconds(1);
-            timeSeconds += 1;
+            while(true)
+            {
+                string formatted = $"{timeSeconds / 60}:" + ((timeSeconds % 60) > 9 ? timeSeconds % 60 : "0" + (timeSeconds % 60));
+                timeElapsed.text = formatted;
+                yield return new WaitForSeconds(1);
+                timeSeconds += 1;
+            }
         }
 
 

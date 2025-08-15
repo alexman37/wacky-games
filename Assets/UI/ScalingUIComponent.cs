@@ -32,7 +32,7 @@ public class ScalingUIComponent : MonoBehaviour
 
 
     private RectTransform rect;
-    private Rect screenSpace;
+    private static Rect screenSpace;
 
     /// <summary>
     /// Pivot point for a UI object.
@@ -55,9 +55,97 @@ public class ScalingUIComponent : MonoBehaviour
     /// </summary>
     public void proportionalSetLoc()
     {
-        Debug.Log("Begin with screen dimensions of " + screenSpace.width + ":" + screenSpace.height);
-        Debug.Log("And current res " + Screen.width + ":" + Screen.height);
-        if (!rect) Start();
+        if (rect == null) Start();
+
+        //Set position based on focal point
+        getPositionFromProportion(rect, focalPoint, percentPosition);
+
+        //Set scale only if we want to
+        if (percentScale.x != -1 && !constantSize)
+        {
+            Vector2 oldDims = new Vector2(rect.rect.width, rect.rect.height);
+            if (maintainAspectRatioX)
+            {
+                // Height may not match up with inputted scale if you chose to scale by aspect ratio
+                float aspectedHeight = rect.rect.height / rect.rect.width * screenSpace.width * percentScale.x;
+                rect.sizeDelta = new Vector2(screenSpace.width * percentScale.x, aspectedHeight);
+            }
+            else if (maintainAspectRatioY)
+            {
+                // Similar story for width if you base the aspect ratio on Y
+                float aspectedWidth = rect.rect.width / rect.rect.height * screenSpace.height * percentScale.y;
+                rect.sizeDelta = new Vector2(aspectedWidth, screenSpace.height * percentScale.y);
+            }
+            else
+            {
+                rect.sizeDelta = new Vector2(screenSpace.width * percentScale.x, screenSpace.height * percentScale.y);
+            }
+
+            Vector2 newDims = new Vector2(rect.rect.width, rect.rect.height);
+
+            for (int i = 0; i < this.transform.childCount; i++)
+            {
+                recursiveResizeChildren(this.transform.GetChild(i).GetComponent<RectTransform>(), oldDims, newDims);
+            }
+        }
+
+        DONE = true;
+        completedScaling.Invoke();
+    }
+
+    // Call on each child
+    private void recursiveResizeChildren(RectTransform resizeMeAndMyKids, Vector2 oldDims, Vector2 newDims)
+    {
+        // Do not scale any other Scaling UI components - let them take care of themselves
+        if(resizeMeAndMyKids.GetComponent<ScalingUIComponent>() != null)
+        {
+            return;
+        } 
+        
+        else
+        {
+            Vector2 ratio = newDims / oldDims;
+
+            Vector2 thisOldDims = new Vector2(resizeMeAndMyKids.rect.width, resizeMeAndMyKids.rect.height);
+            resizeMeAndMyKids.anchoredPosition *= ratio;
+            resizeMeAndMyKids.sizeDelta *= ratio;
+
+            // if the object has a MeshRenderer it is a 3D object and so we need to adjust its scale.
+            if (resizeMeAndMyKids.transform.GetComponent<ScalingUIAnchor>() != null)
+            {
+                //Dont forget to scale Z too- it would get lost if you only used the Vector2 ratio
+                float tempZ = resizeMeAndMyKids.localScale.z * ratio.x;
+                resizeMeAndMyKids.localScale = new Vector3(resizeMeAndMyKids.localScale.x * ratio.x, resizeMeAndMyKids.localScale.y * ratio.y, tempZ);
+                return;
+            }
+            Vector2 thisNewDims = new Vector2(resizeMeAndMyKids.rect.width, resizeMeAndMyKids.rect.height);
+
+            // A side effect: If this component is text you must scale the font size accordingly
+            // This takes both x and y into account
+            TextMeshProUGUI possibleText = resizeMeAndMyKids.GetComponent<TextMeshProUGUI>();
+            if (possibleText != null)
+            {
+                // For now just use whichever is more "extreme"
+
+                float xExtremity, yExtremity;
+                if (ratio.x < 1) xExtremity = 1 / ratio.x; else xExtremity = ratio.x;
+                if (ratio.y < 1) yExtremity = 1 / ratio.y; else yExtremity = ratio.y;
+                if (xExtremity > yExtremity) possibleText.fontSize *= ratio.x; else possibleText.fontSize *= ratio.y;
+            }
+
+            // And each child of the child...etc
+            for (int i = 0; i < resizeMeAndMyKids.transform.childCount; i++)
+            {
+                recursiveResizeChildren(resizeMeAndMyKids.GetChild(i).GetComponent<RectTransform>(), thisOldDims, thisNewDims);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Set position based on focal point
+    /// </summary>
+    public static Vector2 getPositionFromProportion(RectTransform rect, Position focalPoint, Vector2 percentPosition)
+    {
         Vector2 newLoc = new Vector2(0, 0);
 
         // First set anchored position
@@ -149,87 +237,9 @@ public class ScalingUIComponent : MonoBehaviour
                 break;
         }
 
-        //Set scale only if we want to
-        if (percentScale.x != -1 && !constantSize)
-        {
-            Vector2 oldDims = new Vector2(rect.rect.width, rect.rect.height);
-            if (maintainAspectRatioX)
-            {
-                // Height may not match up with inputted scale if you chose to scale by aspect ratio
-                float aspectedHeight = rect.rect.height / rect.rect.width * screenSpace.width * percentScale.x;
-                rect.sizeDelta = new Vector2(screenSpace.width * percentScale.x, aspectedHeight);
-            }
-            else if (maintainAspectRatioY)
-            {
-                // Similar story for width if you base the aspect ratio on Y
-                float aspectedWidth = rect.rect.width / rect.rect.height * screenSpace.height * percentScale.y;
-                rect.sizeDelta = new Vector2(aspectedWidth, screenSpace.height * percentScale.y);
-            }
-            else
-            {
-                rect.sizeDelta = new Vector2(screenSpace.width * percentScale.x, screenSpace.height * percentScale.y);
-            }
-
-            Vector2 newDims = new Vector2(rect.rect.width, rect.rect.height);
-
-            for (int i = 0; i < this.transform.childCount; i++)
-            {
-                recursiveResizeChildren(this.transform.GetChild(i).GetComponent<RectTransform>(), oldDims, newDims);
-            }
-        }
-
-        if (name == "SettingsPopup")
-        {
-            percentPosition = new Vector2(0.5f, -0.5f);
-        }
-
         rect.anchoredPosition = newLoc;
-        DONE = true;
-        completedScaling.Invoke();
-
-        Debug.Log("New width:height for " + name + " were " + rect.rect.width + ":" + rect.rect.height);
+        return newLoc;
     }
-
-    // Call on each child
-    private void recursiveResizeChildren(RectTransform resizeMeAndMyKids, Vector2 oldDims, Vector2 newDims)
-    {
-        Vector2 ratio = newDims / oldDims;
-
-        Vector2 thisOldDims = new Vector2(resizeMeAndMyKids.rect.width, resizeMeAndMyKids.rect.height);
-        resizeMeAndMyKids.anchoredPosition *= ratio;
-        resizeMeAndMyKids.sizeDelta *= ratio;
-
-        // if the object has a MeshRenderer it is a 3D object and so we need to adjust its scale.
-        if (resizeMeAndMyKids.transform.GetComponent<ScalingUIAnchor>() != null)
-        {
-            //Dont forget to scale Z too- it would get lost if you only used the Vector2 ratio
-            float tempZ = resizeMeAndMyKids.localScale.z * ratio.x;
-            resizeMeAndMyKids.localScale = new Vector3(resizeMeAndMyKids.localScale.x * ratio.x, resizeMeAndMyKids.localScale.y * ratio.y, tempZ);
-            return;
-        }
-        Vector2 thisNewDims = new Vector2(resizeMeAndMyKids.rect.width, resizeMeAndMyKids.rect.height);
-
-        // A side effect: If this component is text you must scale the font size accordingly
-        // This takes both x and y into account
-        TextMeshProUGUI possibleText = resizeMeAndMyKids.GetComponent<TextMeshProUGUI>();
-        if (possibleText != null)
-        {
-            // For now just use whichever is more "extreme"
-
-            float xExtremity, yExtremity;
-            if (ratio.x < 1) xExtremity = 1 / ratio.x; else xExtremity = ratio.x;
-            if (ratio.y < 1) yExtremity = 1 / ratio.y; else yExtremity = ratio.y;
-            if (xExtremity > yExtremity) possibleText.fontSize *= ratio.x; else possibleText.fontSize *= ratio.y;
-        }
-
-        // And each child of the child...etc
-        for (int i = 0; i < resizeMeAndMyKids.transform.childCount; i++)
-        {
-            recursiveResizeChildren(resizeMeAndMyKids.GetChild(i).GetComponent<RectTransform>(), thisOldDims, thisNewDims);
-        }
-    }
-
-
 
 
 
@@ -237,21 +247,28 @@ public class ScalingUIComponent : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        InitSetup();
+    }
+
+    public void InitSetup()
+    {
         completedScaling += () => { };
 
         rect = this.GetComponent<RectTransform>();
-        screenSpace = Screen.safeArea;
-
-        proportionalSetLoc();
 
         if (!setProportions)
         {
             setProportions = true;
+
+            screenSpace = Screen.safeArea;
+
             screenSafeAreaProportions = (Screen.safeArea.x / Screen.width,
                 Screen.safeArea.y / Screen.height,
                 Screen.safeArea.width / Screen.width,
                 Screen.safeArea.height / Screen.height);
         }
+
+        proportionalSetLoc();
     }
 
     // TODO: Handle resizes.

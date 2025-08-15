@@ -45,6 +45,7 @@ namespace Games.Minesweeper
 
             Debug.Log("All services started - beginning game!");
             resetState(100, 10);
+            MinesweeperEventsManager.instance.dispatch_startNewGame(100, 10);
             GridManager.Instance.GenerateGrid(10, 10, 10);
         }
 
@@ -83,6 +84,7 @@ namespace Games.Minesweeper
         void revealedXTiles(int numRevealed)
         {
             state.numTilesRevealed += numRevealed;
+            Debug.Log("How many revealed total? " + state.numTilesRevealed);
 
             // Win condition: You have revealed all the tiles that aren't mines
             if (state.numTilesRevealed >= state.numTilesTotal - state.numMines)

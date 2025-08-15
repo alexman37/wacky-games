@@ -23,7 +23,7 @@ namespace Games.Minesweeper
         // Start is called before the first frame update
         void Start()
         {
-            Debug.Log("Tile created at coordinates: " + coordinates);
+            //Debug.Log("Tile created at coordinates: " + coordinates);
             changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
         }
 
@@ -134,21 +134,61 @@ namespace Games.Minesweeper
             GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles  
             if (value == 0)
             {
+                int revealedInChain = 1;
+
                 changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(0));
                 foreach (Tile neighbor in adjacencies)
                 {
                     if (neighbor != null)
                     {
-                        neighbor.RevealTile(); // Recursively reveal neighboring tiles with value 0
+                        revealedInChain += neighbor.RevealTileHelper(); // Recursively reveal neighboring tiles with value 0
                     }
                 }
+
+                Debug.Log("Just revealed " + revealedInChain + " tiles");
+                MinesweeperEventsManager.instance.dispatch_revealedXtiles(revealedInChain);
             }
             else
             {
                 changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(value));
+                MinesweeperEventsManager.instance.dispatch_revealedXtiles(1);
                 return;
             }
+        }
 
+        private int RevealTileHelper()
+        {
+            revealed = true; // Mark this tile as revealed
+            if (GridManager.Instance.checkedTiles.Contains(this))
+            {
+                return 0; // If already checked or flagged, do nothing
+            }
+            else if (hasMine)
+            {
+                return 0; // If this tile has a mine, just reveal it and stop here
+            }
+            GridManager.Instance.checkedTiles.Add(this); // Add this tile to the checked tiles
+            if (value == 0)
+            {
+                int revealedInChain = 0;
+
+                changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(0));
+                foreach (Tile neighbor in adjacencies)
+                {
+                    if (neighbor != null)
+                    {
+                        revealedInChain += neighbor.RevealTileHelper(); // Recursively reveal neighboring tiles with value 0
+                    }
+                }
+
+                //Debug.Log("Just revealed " + revealedInChain + " tiles");
+                return 1 + revealedInChain;
+            }
+            else
+            {
+                changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(value));
+                return 1;
+            }
         }
 
         private void OnMouseOver()

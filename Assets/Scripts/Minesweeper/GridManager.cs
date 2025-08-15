@@ -16,7 +16,7 @@ namespace Games.Minesweeper
         public GameObject hexTile;
         public GameObject GridParent; // Parent object for the grid tiles
         public List<GameObject> tilesWithMines; // List to store tiles with mines for debugging
-        public List<Tile> checkedTiles = new List<Tile>(); // List to keep track of checked tiles
+        public HashSet<Tile> checkedTiles = new HashSet<Tile>(); // List to keep track of checked tiles
 
         public TileType tileType; // Default tile type
         public int RowCount;
@@ -75,7 +75,7 @@ namespace Games.Minesweeper
                 Destroy(gameObject);
             }
             tilesWithMines = new List<GameObject>();
-            checkedTiles = new List<Tile>();
+            checkedTiles = new HashSet<Tile>();
             hasPlayerMadeFirstMove = false; // Initialize the first move flag
 
             greenlight = true;

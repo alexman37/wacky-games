@@ -5,7 +5,6 @@ public class LoadAssetBundle
 {
     public delegate void callback0<T>(T anyArg);
 
-
     // Load an entire asset bundle
     public static IEnumerator LoadBundle<T>(string assetBundleName, callback0<T[]> callback) where T : UnityEngine.Object
     {
@@ -29,7 +28,7 @@ public class LoadAssetBundle
             raw[i] = asset.allAssets[i] as T;
         }
 
-        // Do something with it
+        // Call callback method supplied as arg
         callback(raw);
 
         assetBundle.Unload(false);
