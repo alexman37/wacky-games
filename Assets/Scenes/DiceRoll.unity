@@ -204,7 +204,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 19069119}
         m_TargetAssemblyTypeName: DiceManager, Assembly-CSharp
-        m_MethodName: RollDice
+        m_MethodName: RollDiceSingular
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -282,7 +282,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dicePrefab: {fileID: 3326994215756838513, guid: ab789a5eab177134f83c23bbdc1663b8, type: 3}
-  totalDice: 3
+  totalDice: 1
+  resultValues: []
 --- !u!4 &19069120
 Transform:
   m_ObjectHideFlags: 0
@@ -656,7 +657,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 19069119}
         m_TargetAssemblyTypeName: DiceManager, Assembly-CSharp
-        m_MethodName: ResetDice
+        m_MethodName: ResetDiceSingular
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
