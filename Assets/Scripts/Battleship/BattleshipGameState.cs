@@ -28,6 +28,7 @@ namespace Games.Battleship
         public override void Enter()
         {
             Debug.Log("Entering Start State");
+            BattleshipCameraManager.Initialize();
             // Show start menu, initialize game parameters
         }
 
@@ -65,6 +66,19 @@ namespace Games.Battleship
             if (player1Ready && player2Ready)
             {
                 manager.ChangeState(new PlayerTurnState(manager));
+            }
+        }
+
+        public override void HandleInput()
+        {
+            // Handle ship placement input for both players
+            // This could be mouse clicks on the grid to place ships
+            // For example, if player 1 places a ship, call SetPlayer1Ready()
+            // and similarly for player 2.
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Debug.Log("Hitting R");
+                BattleshipCameraManager.RotateCamera();
             }
         }
 

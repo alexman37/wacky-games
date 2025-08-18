@@ -40,32 +40,47 @@ namespace Games.Battleship
             {
                 for (int col = 0; col < colCount; col++)
                 {
+                    Vector2Int position = new Vector2Int(col, row);
+                    Vector3 worldPositionP1 = new Vector3(
+                        col * DEFAULT_SPACING_X,
+                        DEFAULT_HEIGHT,
+                        -row * DEFAULT_SPACING_Z
+                    );
+                    Vector3 worldPositionP2 = new Vector3(
+                        col * DEFAULT_SPACING_X,
+                        row * DEFAULT_SPACING_Z,
+                        .75f
+                    );
+                    /*
                     Vector2Int positionP1 = new Vector2Int(col, row);
                     Vector3 worldPositionP1 = new Vector3(
                         col * DEFAULT_SPACING_X,
                         DEFAULT_HEIGHT,
                         row * DEFAULT_SPACING_Z
                     );
-
-                    Vector2Int positionP2 = new Vector2Int(-col, -row);
+                    */
+                    /*
+                    Vector2Int positionP2 = new Vector2Int(col, row);
                     Vector3 worldPositionP2 = new Vector3(
                         -col * DEFAULT_SPACING_X,
-                        -DEFAULT_HEIGHT,
+                        DEFAULT_HEIGHT,
                         -row * DEFAULT_SPACING_Z
                     );
+                    */
                     GameObject tileP1 = Instantiate(BattleshipTilePrefab, worldPositionP1, Quaternion.identity);
                     tileP1.name = $"P1_{row}_{col}";
                     tileP1.transform.parent = Player1GridParent.transform;
-                    Player1Grid[positionP1] = tileP1;
+                    Player1Grid[position] = tileP1;
                     Tile tileComponentP1 = tileP1.GetComponent<Tile>();
-                    tileComponentP1.coordinates = positionP1;
+                    tileComponentP1.coordinates = position;
 
                     GameObject tileP2 = Instantiate(BattleshipTilePrefab, worldPositionP2, Quaternion.identity);
                     tileP2.name = $"P2_{row}_{col}";
                     tileP2.transform.parent = Player2GridParent.transform;
-                    Player2Grid[positionP2] = tileP2;
+                    tileP2.transform.rotation = Quaternion.Euler(90, 0, 0);
+                    Player2Grid[position] = tileP2;
                     Tile tileComponentP2 = tileP2.GetComponent<Tile>();
-                    tileComponentP2.coordinates = positionP2;
+                    tileComponentP2.coordinates = position;
                 }
             }
         }
