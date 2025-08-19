@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2805415683854619694}
   - component: {fileID: 957990215073394853}
   - component: {fileID: 3689830384510864579}
-  - component: {fileID: -23493712346135687}
+  - component: {fileID: 4066259973734984917}
   m_Layer: 5
   m_Name: SubmarineTmp
   m_TagString: Untagged
@@ -77,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &-23493712346135687
+--- !u!114 &4066259973734984917
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,10 +86,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6860720262874835990}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba60a512709f2264eb6bb7abf4a4a558, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ade39ddc59f63e4c95c4be9e8403303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  occupiedTiles: []
   selected: 0
 --- !u!1 &7114109238098761726
 GameObject:

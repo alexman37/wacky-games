@@ -1673,8 +1673,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player1GridParent: {fileID: 28779886}
+  Player1TopGridParent: {fileID: 0}
   Player2GridParent: {fileID: 210581439}
-  BattleshipTilePrefab: {fileID: 6013091181871144639, guid: 1cd105f8f8300614aa07abbdb289fff1, type: 3}
+  PlayerTilePrefab: {fileID: 6013091181871144639, guid: 1cd105f8f8300614aa07abbdb289fff1, type: 3}
+  ShotTilePrefab: {fileID: 6846473771203393355, guid: 0c83f71ac647cee499b68a61b308b3c3, type: 3}
   tilesWithShips: []
 --- !u!114 &1774556854
 MonoBehaviour:

@@ -1,26 +1,27 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 namespace Games.Battleship
 {
     /// <summary>
-    /// The ships the players use in battleship. This ship can be a variety of lengths, and potentially
-    /// widths if we want to make it more complex.
+    /// The data model for ships in battleship. Represents the game logic of ships.
     /// </summary>
-    public class Ship : MonoBehaviour, IPointerDownHandler
+    public class Ship
     {
         public int shipLength;
         public BattleshipShipType shipType;
-        public List<Tile> occupiedTiles; //List of the tiles this ship currently occupies.
-        public bool selected = false;
+        public List<PlayerTile> occupiedTiles; // List of the tiles this ship currently occupies.
 
-        public void Initalize(BattleshipShipType type)
+        public Ship(BattleshipShipType type)
         {
-            occupiedTiles = new List<Tile>();
+            Initialize(type);
+        }
+
+        public void Initialize(BattleshipShipType type)
+        {
+            occupiedTiles = new List<PlayerTile>();
             shipType = type;
+
             switch (shipType)
             {
                 case BattleshipShipType.CARRIER:
@@ -40,7 +41,8 @@ namespace Games.Battleship
                     break;
             }
         }
-        public void PlaceShip(List<Tile> tiles)
+
+        public void PlaceShip(List<PlayerTile> tiles)
         {
             occupiedTiles = tiles;
         }
@@ -53,22 +55,6 @@ namespace Games.Battleship
         public BattleshipShipType GetShipType()
         {
             return shipType;
-        }
-
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            if (selected)
-            {
-                selected = false;
-                gameObject.GetComponent<Image>().enabled = false;                
-            }
-            else
-            {
-                selected = true;
-                gameObject.GetComponent<Image>().enabled = true;
-                Debug.Log("Hello I am a " + shipType.ToString());
-                BattleshipManager.Instance.SetShipType(shipType);
-            }
         }
     }
 }

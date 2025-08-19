@@ -8,6 +8,8 @@ namespace Games.Battleship
 
         public Dictionary<Vector2Int, GameObject> Player1Grid { get; private set; }
         public GameObject Player1GridParent; // Parent object for the grid tiles
+        public Dictionary<Vector2Int, GameObject> Player1TopGrid { get; private set; }
+        public GameObject Player1TopGridParent; // Parent object for the grid tiles
 
         public Dictionary<Vector2Int, GameObject> Player2Grid { get; private set; }
         public GameObject Player2GridParent;
@@ -24,7 +26,8 @@ namespace Games.Battleship
                 Destroy(this);
             }
         }
-        public GameObject BattleshipTilePrefab;
+        public GameObject PlayerTilePrefab; //Prefab representing the tiles for the bottom grid (PlayerTile)
+        public GameObject ShotTilePrefab; //Prefab representing the tiles for the top grid (ShotTile)
         public List<GameObject> tilesWithShips; // List for debugging
 
 
@@ -35,18 +38,19 @@ namespace Games.Battleship
         {
             if (Player1Grid == null) Player1Grid = new Dictionary<Vector2Int, GameObject>();
             if (Player2Grid == null) Player2Grid = new Dictionary<Vector2Int, GameObject>();
+            if (Player1TopGrid == null) Player1TopGrid = new Dictionary<Vector2Int, GameObject>();
 
             for (int row = 0; row < rowCount; row++)
             {
                 for (int col = 0; col < colCount; col++)
                 {
                     Vector2Int position = new Vector2Int(col, row);
-                    Vector3 worldPositionP1 = new Vector3(
+                    Vector3 worldPositionPlayerTile = new Vector3(
                         col * DEFAULT_SPACING_X,
                         DEFAULT_HEIGHT,
                         -row * DEFAULT_SPACING_Z
                     );
-                    Vector3 worldPositionP2 = new Vector3(
+                    Vector3 worldPositionShotTile = new Vector3(
                         col * DEFAULT_SPACING_X,
                         row * DEFAULT_SPACING_Z,
                         .75f
@@ -67,27 +71,42 @@ namespace Games.Battleship
                         -row * DEFAULT_SPACING_Z
                     );
                     */
-                    GameObject tileP1 = Instantiate(BattleshipTilePrefab, worldPositionP1, Quaternion.identity);
-                    tileP1.name = $"P1_{row}_{col}";
-                    tileP1.transform.parent = Player1GridParent.transform;
-                    Player1Grid[position] = tileP1;
-                    Tile tileComponentP1 = tileP1.GetComponent<Tile>();
+                    GameObject playerTile = Instantiate(PlayerTilePrefab, worldPositionPlayerTile, Quaternion.identity);
+                    playerTile.name = $"P1_{row}_{col}";
+                    playerTile.transform.parent = Player1GridParent.transform;
+                    Player1Grid[position] = playerTile;
+                    PlayerTile tileComponentP1 = playerTile.GetComponent<PlayerTile>();
                     tileComponentP1.coordinates = position;
 
-                    GameObject tileP2 = Instantiate(BattleshipTilePrefab, worldPositionP2, Quaternion.identity);
+                    GameObject shotTile = Instantiate(ShotTilePrefab, worldPositionShotTile, Quaternion.identity);
+                    shotTile.name = $"P2_{row}_{col}";
+                    shotTile.transform.parent = Player2GridParent.transform;
+                    shotTile.transform.rotation = Quaternion.Euler(-90, 0, 0);
+                    Player1TopGrid[position] = shotTile;
+                    ShotTile tileComponentP2 = shotTile.GetComponent<ShotTile>();
+                    tileComponentP2.coordinates = position;
+                    /*
+                    GameObject tileP2 = Instantiate(BattleshipTilePrefab, worldPositionShotTile, Quaternion.identity);
                     tileP2.name = $"P2_{row}_{col}";
                     tileP2.transform.parent = Player2GridParent.transform;
                     tileP2.transform.rotation = Quaternion.Euler(90, 0, 0);
                     Player2Grid[position] = tileP2;
-                    Tile tileComponentP2 = tileP2.GetComponent<Tile>();
+                    PlayerTile tileComponentP2 = tileP2.GetComponent<PlayerTile>();
                     tileComponentP2.coordinates = position;
+                    */
                 }
             }
         }
 
-        public Tile GetTileFromPosition(int row, int col)
+        public PlayerTile GetPlayerTileFromPosition(int row, int col)
         {
-            return Player1Grid[new Vector2Int(row, col)].GetComponent<Tile>();
+            return Player1Grid[new Vector2Int(row, col)].GetComponent<PlayerTile>();
+        }
+
+        //Unlikely to be used, but included for completeness
+        public ShotTile GetShotTileFromPosition(int row, int col)
+        {
+            return Player1TopGrid[new Vector2Int(row, col)].GetComponent<ShotTile>();
         }
 
         public void DestroyGrids()
@@ -105,7 +124,7 @@ namespace Games.Battleship
         }
 
         // Start transparency animation for multiple tiles
-        public void StartTransparencyChange(List<Tile> tiles, float duration)
+        public void StartTransparencyChange(List<BattleshipTile> tiles, float duration)
         {
             if (tiles == null)
             {
@@ -114,7 +133,7 @@ namespace Games.Battleship
             }
                 
 
-            foreach (Tile tile in tiles)
+            foreach (BattleshipTile tile in tiles)
             {
                 if (tile != null)
                 {
@@ -123,12 +142,12 @@ namespace Games.Battleship
             }
         }
 
-        public void StopTransparencyChangeTiles(List<Tile> tiles)
+        public void StopTransparencyChangeTiles(List<BattleshipTile> tiles)
         {
             if (tiles == null)
                 return;
 
-            foreach (Tile tile in tiles)
+            foreach (BattleshipTile tile in tiles)
             {
                 if (tile != null)
                 {

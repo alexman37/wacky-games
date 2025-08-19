@@ -28,12 +28,17 @@ namespace Games.Battleship
             foreach(Ship ship in shipsToInstantiate)
             {
                 GameObject shipPlacement = Instantiate(battleshipPrefabs[(int)ship.GetShipType()], new Vector3(0,0,0), Quaternion.identity);
-                shipPlacement.GetComponent<Ship>().Initalize(ship.GetShipType());
+                shipPlacement.GetComponent<ShipUI>().Initialize(ship.GetShipType());
                 shipPlacement.name = ship.GetShipType().ToString();
-                Debug.Log("WTF I am a " + ship.GetShipType().ToString());
                 shipPlacement.transform.parent = shipPlacementPanel.transform;
                 createdShips.Add(shipPlacement);
             }
+            shipPlacementPanel.GetComponent<WidgetPopup>().openWidgetPopup();
+        }
+
+        //It says Open Widget but it really just opens and closes it, so we can use the same one to "close" it
+        public void ClosePanel()
+        {
             shipPlacementPanel.GetComponent<WidgetPopup>().openWidgetPopup();
         }
 

@@ -344,7 +344,7 @@ namespace Games.Minesweeper
                 {
                     tile.AssignValue();
                     // Optional: Update visuals for debugging
-                    //Debug.Log($"Tile at {tile.coordinates} has value {tile.value}");
+                    //Debug.Log($"PlayerTile at {tile.coordinates} has value {tile.value}");
                 }
             }
         }

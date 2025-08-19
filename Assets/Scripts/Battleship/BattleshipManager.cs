@@ -63,12 +63,13 @@ namespace Games.Battleship
 
         void InitializeGame()
         {
+            // Once the start state goes to place ships state, we update the current Turn to be game setup
+            currentTurn = BattleshipTurn.NONE;
             shipTypes = BattleshipGameModes.GetShipTypes(gameMode);
             foreach(BattleshipShipType shipType in shipTypes)
             {
                 Debug.Log("Ship Type: " + shipType);
-                Ship newShip = new Ship();
-                newShip.Initalize(shipType);
+                Ship newShip = new Ship(shipType);
                 createdShips.Add(newShip);
             }
             GameObject player1 = Instantiate(playerPrefab);
@@ -82,8 +83,7 @@ namespace Games.Battleship
             player2Component = player2.GetComponent<BattleshipPlayer>();
             player2Component.Initialize(shipTypes, false);
 
-            GridManager.Instance.GenerateGrid(GridWidth, GridHeight);
-            currentTurn = BattleshipTurn.GAME_SETUP;
+            GridManager.Instance.GenerateGrid(GridWidth, GridHeight);           
         }
 
         public List<Ship> GetShips()

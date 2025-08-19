@@ -12,7 +12,7 @@ namespace Games.Minesweeper
     /// </summary>
     public class Tile : MonoBehaviour
     {
-        // Tile variables.
+        // PlayerTile variables.
         public Vector2 coordinates;
         public bool hasMine;
         public bool flagged = false;
@@ -23,7 +23,7 @@ namespace Games.Minesweeper
         // Start is called before the first frame update
         void Start()
         {
-            //Debug.Log("Tile created at coordinates: " + coordinates);
+            //Debug.Log("PlayerTile created at coordinates: " + coordinates);
             changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
         }
 

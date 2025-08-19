@@ -37,6 +37,7 @@ namespace Games.Battleship
             // When player chooses to start game
             if (Input.GetKeyDown(KeyCode.Space)) // Example trigger
             {
+                manager.currentTurn = BattleshipTurn.GAME_SETUP;
                 manager.ChangeState(new PlaceShipsState(manager));
             }
         }
@@ -69,6 +70,7 @@ namespace Games.Battleship
                 ShipPlacementUI.Instance.ShowShipPlacementPanel(); //Closes ship placement UI
                 manager.ChangeState(new PlayerTurnState(manager));
             }
+
         }
 
         public override void HandleInput()
@@ -78,14 +80,28 @@ namespace Games.Battleship
             // This could be mouse clicks on the grid to place ships
             // For example, if player 1 places a ship, call SetPlayer1Ready()
             // and similarly for player 2.
+            
+            if(scrollInput != 0) // Allows the players to place ships horizontally or vertically
+            {
+                BattleshipManager.Instance.RotateShipPlacement();
+            }
             if (Input.GetKeyDown(KeyCode.R))
             {
                 Debug.Log("Hitting R");
                 BattleshipCameraManager.RotateCamera();
             }
-            if(scrollInput != 0) // Allows the players to place ships horizontally or vertically
+            else if (Input.GetKeyDown(KeyCode.Escape))
             {
-                BattleshipManager.Instance.RotateShipPlacement();
+                // Handle pause input
+                manager.ChangeState(new PauseState(manager, this));
+            }
+            else if(Input.GetKeyDown(KeyCode.Space))
+            {
+                // For testing purposes, we can set both players ready
+                manager.currentTurn = BattleshipTurn.PLAYER1; //Set to player 1's turn for testing purposes
+                SetPlayer1Ready();
+                SetPlayer2Ready();
+                ShipPlacementUI.Instance.ClosePanel(); //Closes ship placement UI
             }
         }
 
@@ -117,7 +133,11 @@ namespace Games.Battleship
         // TODO: Check player input for attacks. Maybe we can do both keyboard input and mouse input
         public override void HandleInput()
         {
-            
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Debug.Log("Hitting R");
+                BattleshipCameraManager.RotateCamera();
+            }
         }
 
         public void EndTurn()

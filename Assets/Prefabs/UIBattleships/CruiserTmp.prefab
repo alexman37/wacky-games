@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 4847793241664321167}
   - component: {fileID: 1782663572571870921}
   - component: {fileID: 8074374529093149914}
-  - component: {fileID: 3738647136067490654}
+  - component: {fileID: 8127025806655724876}
   m_Layer: 5
   m_Name: CruiserTmp
   m_TagString: Untagged
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3738647136067490654
+--- !u!114 &8127025806655724876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,8 +161,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4061166127355460175}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba60a512709f2264eb6bb7abf4a4a558, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ade39ddc59f63e4c95c4be9e8403303, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  occupiedTiles: []
   selected: 0
