@@ -9,6 +9,6 @@ namespace Games.Battleship
     /// </summary>
     public class Ship : MonoBehaviour
     {
-        
+        public int shipLength;
     }
 }
