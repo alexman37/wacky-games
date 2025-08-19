@@ -17,7 +17,7 @@ namespace Games.Battleship
                         BattleshipShipType.BATTLESHIP,
                         BattleshipShipType.CRUISER,
                         BattleshipShipType.SUBMARINE,
-                        BattleshipShipType.DESTROYER,
+                        BattleshipShipType.DESTROYER
                     };
                 default:
                     return new List<BattleshipShipType>();

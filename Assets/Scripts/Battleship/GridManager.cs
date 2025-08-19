@@ -85,6 +85,11 @@ namespace Games.Battleship
             }
         }
 
+        public Tile GetTileFromPosition(int row, int col)
+        {
+            return Player1Grid[new Vector2Int(row, col)].GetComponent<Tile>();
+        }
+
         public void DestroyGrids()
         {
             for (int i = Player1GridParent.transform.childCount - 1; i >= 0; i--)
@@ -96,6 +101,39 @@ namespace Games.Battleship
             {
                 // Destroy the child GameObject
                 Destroy(Player2GridParent.transform.GetChild(j).gameObject);
+            }
+        }
+
+        // Start transparency animation for multiple tiles
+        public void StartTransparencyChange(List<Tile> tiles, float duration)
+        {
+            if (tiles == null)
+            {
+                Debug.Log("Tiles are null");
+                return;
+            }
+                
+
+            foreach (Tile tile in tiles)
+            {
+                if (tile != null)
+                {
+                    tile.StartChangingTransparency(duration);
+                }
+            }
+        }
+
+        public void StopTransparencyChangeTiles(List<Tile> tiles)
+        {
+            if (tiles == null)
+                return;
+
+            foreach (Tile tile in tiles)
+            {
+                if (tile != null)
+                {
+                    tile.StopChangingTransparency();
+                }
             }
         }
     }

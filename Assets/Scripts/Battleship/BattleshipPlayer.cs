@@ -21,6 +21,8 @@ namespace Games.Battleship
         public bool AreAllShipsSunk()
         {
             return totalShipValue <= 0;
-        }
+        }       
     }
+
+    
 }

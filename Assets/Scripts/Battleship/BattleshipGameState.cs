@@ -58,6 +58,7 @@ namespace Games.Battleship
         {
             Debug.Log("Entering Setup State");
             manager.currentTurn = BattleshipTurn.GAME_SETUP;
+            ShipPlacementUI.Instance.ShowShipPlacementPanel();
         }
 
         public override void Update()
@@ -65,12 +66,14 @@ namespace Games.Battleship
             // Check if both players have placed their ships
             if (player1Ready && player2Ready)
             {
+                ShipPlacementUI.Instance.ShowShipPlacementPanel(); //Closes ship placement UI
                 manager.ChangeState(new PlayerTurnState(manager));
             }
         }
 
         public override void HandleInput()
         {
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
             // Handle ship placement input for both players
             // This could be mouse clicks on the grid to place ships
             // For example, if player 1 places a ship, call SetPlayer1Ready()
@@ -79,6 +82,10 @@ namespace Games.Battleship
             {
                 Debug.Log("Hitting R");
                 BattleshipCameraManager.RotateCamera();
+            }
+            if(scrollInput != 0) // Allows the players to place ships horizontally or vertically
+            {
+                BattleshipManager.Instance.RotateShipPlacement();
             }
         }
 

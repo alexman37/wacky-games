@@ -11,11 +11,14 @@ namespace Games.Battleship
         public const int GridHeight = 10;
         public BattleshipTurn currentTurn;
         public List<BattleshipShipType> shipTypes;
+        public BattleshipShipType selectedShipType;
         public BattleshipGameMode gameMode = BattleshipGameMode.CLASSIC;
-        private BattleshipGameState currentState;
+        public BattleshipRotation shipRotation; // When the player is hovering tiles, what rotation is the ship in?
+        private BattleshipGameState currentState;       
+        private List<Ship> createdShips; //List of ship objects created by the gamemode.
         public GameObject playerPrefab;
-        private BattleshipPlayer player1Component;
-        private BattleshipPlayer player2Component;
+        public BattleshipPlayer player1Component;
+        public BattleshipPlayer player2Component;
         public BattleshipManager()
         {
             if(Instance == null)
@@ -30,7 +33,9 @@ namespace Games.Battleship
 
         public void Start()
         {
-            if(currentTurn == BattleshipTurn.NONE)
+            createdShips = new List<Ship>();
+            shipRotation = BattleshipRotation.HORIZONTAL;
+            if (currentTurn == BattleshipTurn.NONE)
             {
                 InitializeGame();
             }
@@ -59,6 +64,13 @@ namespace Games.Battleship
         void InitializeGame()
         {
             shipTypes = BattleshipGameModes.GetShipTypes(gameMode);
+            foreach(BattleshipShipType shipType in shipTypes)
+            {
+                Debug.Log("Ship Type: " + shipType);
+                Ship newShip = new Ship();
+                newShip.Initalize(shipType);
+                createdShips.Add(newShip);
+            }
             GameObject player1 = Instantiate(playerPrefab);
             player1.name = "Player 1";
             player1Component = player1.GetComponent<BattleshipPlayer>();
@@ -74,6 +86,22 @@ namespace Games.Battleship
             currentTurn = BattleshipTurn.GAME_SETUP;
         }
 
+        public List<Ship> GetShips()
+        {
+            return createdShips;
+        }
+
+        public void SetShipType(BattleshipShipType shipType)
+        {
+            Debug.Log("Selected Ship Type " + shipType.ToString());
+            selectedShipType = shipType;
+        }
+
+        public BattleshipShipType GetSelectedShipType()
+        {
+            return selectedShipType;
+        }
+
         public void ChangeState(BattleshipGameState newState)
         {
             if (currentState != null)
@@ -87,6 +115,12 @@ namespace Games.Battleship
             {
                 currentState.Enter();
             }
+        }
+
+        // Used for like tile highlighting depending on if its the player turn or setup phase
+        public BattleshipTurn GetCurrentTurn()
+        {
+            return currentTurn;
         }
 
         // Since we are checking each player here, should we return an enum or something saying specifically
@@ -110,12 +144,25 @@ namespace Games.Battleship
         {
 
         }
+
+        public void RotateShipPlacement()
+        {
+            if (shipRotation == BattleshipRotation.HORIZONTAL)
+            {
+                shipRotation = BattleshipRotation.VERTICAL;
+            }
+            else
+            {
+                shipRotation = BattleshipRotation.HORIZONTAL;
+            }
+        }
     }
     public enum BattleshipTurn { NONE, GAME_SETUP, PLAYER1, PLAYER2, GAME_OVER }
-    public enum BattleshipShipType { NONE, CARRIER, BATTLESHIP, CRUISER, SUBMARINE, DESTROYER }
+    public enum BattleshipShipType { CARRIER, BATTLESHIP, CRUISER, SUBMARINE, DESTROYER, NONE }
     // Carrier : 5 tiles, Battleship: 4 tiles, Cruiser: 3 tiles, Submarine: 3 tiles, Destroyer: 2 tiles, Patrol Boat: 2 tiles
     // Add more as needed for different game modes.
     public enum BattleshipGameMode { CLASSIC}
-    }
+    public enum BattleshipRotation { HORIZONTAL, VERTICAL }
+}
 
 

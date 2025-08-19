@@ -472,6 +472,7 @@ GameObject:
   - component: {fileID: 743833833}
   - component: {fileID: 743833832}
   - component: {fileID: 743833831}
+  - component: {fileID: 743833834}
   m_Layer: 5
   m_Name: ShipDeploymentOptions
   m_TagString: Untagged
@@ -559,6 +560,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 743833829}
   m_CullTransparentMesh: 1
+--- !u!114 &743833834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743833829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_Spacing: 10
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &827348981
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,10 +1359,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 743833830}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 155}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1474164878
 MonoBehaviour:
@@ -1625,6 +1652,7 @@ GameObject:
   - component: {fileID: 1774556855}
   - component: {fileID: 1774556854}
   - component: {fileID: 1774556853}
+  - component: {fileID: 1774556856}
   m_Layer: 0
   m_Name: BattleshipManager
   m_TagString: Untagged
@@ -1662,8 +1690,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentTurn: 0
   shipTypes: 
+  selectedShipType: 0
   gameMode: 0
+  shipRotation: 0
   playerPrefab: {fileID: 6139117171759724303, guid: b3270d65104261044b5dd8a7cfb5fa48, type: 3}
+  player1Component: {fileID: 0}
+  player2Component: {fileID: 0}
 --- !u!4 &1774556855
 Transform:
   m_ObjectHideFlags: 0
@@ -1679,6 +1711,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1774556856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1774556852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9368f2cd04d41e845b628d6768da7e37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shipPlacementPanel: {fileID: 743833829}
+  battleshipPrefabs:
+  - {fileID: 1413805196848720696, guid: 35ae318d8bd860f458d44b0b2d6db4fc, type: 3}
+  - {fileID: 513041707134980813, guid: 18c7d73d73185824697ac5107bdbbf85, type: 3}
+  - {fileID: 4061166127355460175, guid: 6c6fe552d5d178341b0bd6768f04f7df, type: 3}
+  - {fileID: 6860720262874835990, guid: efee2ba22976950479a699c2cde91178, type: 3}
+  - {fileID: 4068341499649293609, guid: f704942a2354e4f4bab41ba72c9b052f, type: 3}
+  createdShips: []
 --- !u!1 &1946975816
 GameObject:
   m_ObjectHideFlags: 0

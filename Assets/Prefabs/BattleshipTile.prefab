@@ -71,6 +71,7 @@ MonoBehaviour:
   coordinates: {x: 0, y: 0}
   isChecked: 0
   isShip: 0
+  baseMaterial: {fileID: 0}
 --- !u!33 &4562583936072430048
 MeshFilter:
   m_ObjectHideFlags: 0
