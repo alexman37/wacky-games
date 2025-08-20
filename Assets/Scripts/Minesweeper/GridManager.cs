@@ -164,7 +164,7 @@ namespace Games.Minesweeper
                         }
                     }
                 }
-                CameraManager.Instance.SetPositionSquare();
+                CameraManager.Instance.SetPositionSquare(rowCount, colCount);
                 PlaceMinesRandomly(mineCount);
                 return Grid;
             }
@@ -257,6 +257,7 @@ namespace Games.Minesweeper
                         }
                     }
                 }
+                CameraManager.Instance.SetPositionHex(rowCount, colCount);
                 PlaceMinesRandomly(mineCount);
                 // TODO smarter creation at start
                 //CameraManager.Instance.SetPositionHex();

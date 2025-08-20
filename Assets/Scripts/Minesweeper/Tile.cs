@@ -20,6 +20,8 @@ namespace Games.Minesweeper
         public int value = 0;
         public HashSet<Tile> adjacencies;
 
+        private static Tile tileBeingPressed; // when you start holding a tile down
+
         // Start is called before the first frame update
         void Start()
         {
@@ -199,15 +201,22 @@ namespace Games.Minesweeper
                 return;
             }
             // We only care about clicks if the game is active
-            if (Input.GetMouseButtonDown(0) && MinesweeperManager.instance.isAlive())
+            if(MinesweeperManager.instance.isAlive())
             {
-                HandleLeftClick();
+                if (Input.GetMouseButtonDown(0))
+                {
+                    HandleLeftClick();
+                }
+                else if (Input.GetMouseButtonDown(1))
+                {
+                    HandleRightClick();
+                }
+                if (Input.GetMouseButtonUp(0))
+                {
+                    HandleLeftPress();
+                }
             }
-            else
-            if (Input.GetMouseButtonDown(1) && MinesweeperManager.instance.isAlive())
-            {
-                HandleRightClick();
-            }
+            
         }
 
         /// <summary>
@@ -215,35 +224,48 @@ namespace Games.Minesweeper
         /// </summary>
         private void HandleLeftClick()
         {
-            if (!GridManager.Instance.hasPlayerMadeFirstMove)
-            {
-                if (!flagged) // Haven't made a move yet (until now) and this tile isn't flagged
-                {
-                    if (hasMine) //If we have a mine here, we need to put it elsewhere, and regenerate our neighboring values
-                    {
-                        Debug.Log("We have a mine on the first move");
-                        hasMine = false; // Remove the mine from this tile
-                        Debug.Log("Replacing the first mine");
-                        GridManager.Instance.ReplaceFirstMine(this);
-                        Debug.Log("Recalculating tile values after first move");
-                        AssignValue();
-                        foreach (Tile tile in adjacencies)
-                        {
-                            tile.AssignValue(); // Recalculate the values of neighboring tiles
-                        }
-                    }
-                    GridManager.Instance.PlayerHasMadeFirstMove();
-                }
-            }
-            if (!flagged && !revealed)
-            {
-                Debug.Log("Left click on tile at coordinates: " + coordinates);
+            tileBeingPressed = this;
+        }
 
-                RevealTile();
-                if (hasMine)
+        private void HandleLeftPress()
+        {
+            // Two things must be true to care about this event
+            //   - you are releasing on the same tile you started clicking on
+            //   - you haven't dragged too far
+            if(tileBeingPressed == this && CameraManager.Instance.countedAsTilePress())
+            {
+                // Case 1: very first click: may have to regenerate the grid if you click on a mine
+                if (!GridManager.Instance.hasPlayerMadeFirstMove)
                 {
-                    MinesweeperEventsManager.instance.dispatch_gameLost();
-                    return;
+                    if (!flagged) // Haven't made a move yet (until now) and this tile isn't flagged
+                    {
+                        if (hasMine) //If we have a mine here, we need to put it elsewhere, and regenerate our neighboring values
+                        {
+                            Debug.Log("We have a mine on the first move");
+                            hasMine = false; // Remove the mine from this tile
+                            Debug.Log("Replacing the first mine");
+                            GridManager.Instance.ReplaceFirstMine(this);
+                            Debug.Log("Recalculating tile values after first move");
+                            AssignValue();
+                            foreach (Tile tile in adjacencies)
+                            {
+                                tile.AssignValue(); // Recalculate the values of neighboring tiles
+                            }
+                        }
+                        GridManager.Instance.PlayerHasMadeFirstMove();
+                    }
+                }
+                // Case 2: anything else
+                if (!flagged && !revealed)
+                {
+                    Debug.Log("Left click on tile at coordinates: " + coordinates);
+
+                    RevealTile();
+                    if (hasMine)
+                    {
+                        MinesweeperEventsManager.instance.dispatch_gameLost();
+                        return;
+                    }
                 }
             }
         }
@@ -313,6 +335,15 @@ namespace Games.Minesweeper
             //  - If this tile is a mine, you lose immediately
             //  - If not, reveal its value
             //  - Cascading: If this tile has a value of '0' look for other neighboring tiles with a value of 0; reveal them and all their neighbors.
+        }
+
+        public override bool Equals(object other)
+        {
+            if (other is Tile)
+            {
+                return (other as Tile).coordinates == coordinates;
+            }
+            else return false;
         }
     }
 
