@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Games.Minesweeper
 {
@@ -22,9 +23,15 @@ namespace Games.Minesweeper
 
         private static Tile tileBeingPressed; // when you start holding a tile down
 
+        public static event Action tilePressedEvent;
+        public static event Action tileReleasedEvent;
+
         // Start is called before the first frame update
         void Start()
         {
+            if (tilePressedEvent == null) tilePressedEvent += () => { };
+            if (tileReleasedEvent == null) tileReleasedEvent += () => { };
+
             //Debug.Log("PlayerTile created at coordinates: " + coordinates);
             changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
         }
@@ -32,11 +39,13 @@ namespace Games.Minesweeper
         private void OnEnable()
         {
             MinesweeperStyles.newStyleSheetLoaded += changeTileStyle;
+            CameraManager.cameraDragExceededThreshold += IgnoreClick;
         }
 
         private void OnDisable()
         {
             MinesweeperStyles.newStyleSheetLoaded -= changeTileStyle;
+            CameraManager.cameraDragExceededThreshold -= IgnoreClick;
         }
 
         private void changeTileStyle()
@@ -224,7 +233,21 @@ namespace Games.Minesweeper
         /// </summary>
         private void HandleLeftClick()
         {
-            tileBeingPressed = this;
+            if(!revealed)
+            {
+                tileBeingPressed = this;
+                tilePressedEvent.Invoke();
+                changeSpriteTo(MinesweeperStyles.instance.getNumberedSprite(0));
+            }
+        }
+
+        private void IgnoreClick()
+        {
+            if(tileBeingPressed != null)
+            {
+                tileBeingPressed.changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
+                tileBeingPressed = null;
+            }
         }
 
         private void HandleLeftPress()
@@ -232,7 +255,7 @@ namespace Games.Minesweeper
             // Two things must be true to care about this event
             //   - you are releasing on the same tile you started clicking on
             //   - you haven't dragged too far
-            if(tileBeingPressed == this && CameraManager.Instance.countedAsTilePress())
+            if(tileBeingPressed == this)
             {
                 // Case 1: very first click: may have to regenerate the grid if you click on a mine
                 if (!GridManager.Instance.hasPlayerMadeFirstMove)
@@ -267,7 +290,12 @@ namespace Games.Minesweeper
                         return;
                     }
                 }
+            } else if(tileBeingPressed != null)
+            {
+                tileBeingPressed.changeSpriteTo(MinesweeperStyles.instance.getUnclickedSprite());
             }
+            tileReleasedEvent.Invoke();
+            tileBeingPressed = null;
         }
 
         /// <summary>

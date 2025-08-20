@@ -54,6 +54,11 @@ namespace Games.Minesweeper
             return activeStyleSheet.mine;
         }
 
+        public Sprite getSmileySprite(SmileyState state)
+        {
+            return activeStyleSheet.smileys[(int)state];
+        }
+
 
         // On grid regeneration, use the next style sheet
         public void useNextStyle()
@@ -136,6 +141,13 @@ namespace Games.Minesweeper
         public Sprite flagged;
         public Sprite mine;
         public Sprite[] smileys;
+    }
+
+    public enum SmileyState
+    {
+        NORMAL,
+        GASP,
+        DEAD
     }
 
 }

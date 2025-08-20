@@ -72,6 +72,9 @@ namespace Games.Minesweeper
             MinesweeperEventsManager.startNewGame += resetDisplay;
             MinesweeperEventsManager.gameWon += winDisplay;
             MinesweeperEventsManager.gameLost += lossDisplay;
+            Tile.tilePressedEvent += smileyGasps;
+            Tile.tileReleasedEvent += smileyBackToNormal;
+            CameraManager.cameraDragExceededThreshold += smileyStopsCaring;
         }
 
         private void OnDisable()
@@ -79,12 +82,17 @@ namespace Games.Minesweeper
             MinesweeperEventsManager.startNewGame -= resetDisplay;
             MinesweeperEventsManager.gameWon -= winDisplay;
             MinesweeperEventsManager.gameLost -= lossDisplay;
+            Tile.tilePressedEvent -= smileyGasps;
+            Tile.tileReleasedEvent -= smileyBackToNormal;
+            CameraManager.cameraDragExceededThreshold -= smileyStopsCaring;
         }
 
         private void resetDisplay(int numTotal, int numMines)
         {
             flagsRemaining.text = $"0 / {numMines}";
             timeElapsed.text = "0:00";
+            timeSeconds = 0;
+            smiley.sprite = MinesweeperStyles.instance.getSmileySprite(SmileyState.NORMAL);
 
             if (timingCoroutine != null) StopCoroutine(timingCoroutine);
             timingCoroutine = trackTime();
@@ -108,6 +116,25 @@ namespace Games.Minesweeper
             flagsRemaining.text = "You lost :(";
             // Also: stop the timer
             StopCoroutine(timingCoroutine);
+            smiley.sprite = MinesweeperStyles.instance.getSmileySprite(SmileyState.DEAD);
+        }
+
+        private void smileyGasps()
+        {
+            smiley.sprite = MinesweeperStyles.instance.getSmileySprite(SmileyState.GASP);
+        }
+
+        private void smileyBackToNormal()
+        {
+            smiley.sprite = MinesweeperStyles.instance.getSmileySprite(SmileyState.NORMAL);
+        }
+
+        private void smileyStopsCaring()
+        {
+            if(MinesweeperManager.instance.state.alive)
+            {
+                smiley.sprite = MinesweeperStyles.instance.getSmileySprite(SmileyState.NORMAL);
+            }
         }
 
 
@@ -227,6 +254,7 @@ namespace Games.Minesweeper
             if ((int) GridManager.Instance.tileType == currShape)
             {
                 MinesweeperStyles.instance.useNewStyleSheet(shapeName, styleName);
+                if(greenlight) smiley.sprite = MinesweeperStyles.instance.getSmileySprite(MinesweeperManager.instance.state.alive ? SmileyState.NORMAL : SmileyState.DEAD);
             } 
             // For a different shape, "save" the style you want to use, prepping it for the next generation
             else

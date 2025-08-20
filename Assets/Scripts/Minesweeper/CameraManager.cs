@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Games.Minesweeper
 {
@@ -24,6 +25,8 @@ namespace Games.Minesweeper
 
         private bool dragging = false;
         private float dragSumDistance;
+        private bool exceededDragThreshold = false;
+        public static event Action cameraDragExceededThreshold;
 
         const float CAMERA_MARGIN = -1;
         const float SQUARE_TO_HEX_ZOOM_RATIO = 1.5f;
@@ -37,6 +40,7 @@ namespace Games.Minesweeper
             if (Instance == null)
             {
                 Instance = this;
+                cameraDragExceededThreshold += () => { };
             }
             else if (Instance != this)
             {
@@ -90,6 +94,7 @@ namespace Games.Minesweeper
             {
                 dragging = true;
                 dragSumDistance = 0;
+                exceededDragThreshold = false;
             }
             if(Input.GetMouseButtonUp(0))
             {
@@ -98,7 +103,18 @@ namespace Games.Minesweeper
             if(dragging)
             {
                 Vector2 delta = ((Vector2)Input.mousePositionDelta) * dragMultiplier;
-                dragSumDistance += delta.magnitude;
+
+                // keep track of how far we drag. past a certain point we do not count anything as a "click".
+                if(!exceededDragThreshold)
+                {
+                    dragSumDistance += delta.magnitude;
+                    if (dragSumDistance > CLICK_OR_DRAG_THRESHOLD)
+                    {
+                        exceededDragThreshold = true;
+                        cameraDragExceededThreshold.Invoke();
+                    }
+                }
+                
                 transform.position = boundedCameraPosition(transform.position.x + delta.x, transform.position.y, transform.position.z + delta.y);
             }
         }
