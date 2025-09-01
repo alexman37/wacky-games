@@ -32,7 +32,7 @@ namespace Games.Battleship
                 case BattleshipTurn.PLAYER2:
                     // Maybe have some flavor text about the ship? idk
                     break;
-                case BattleshipTurn.GAME_SETUP:
+                case BattleshipTurn.SHIP_SETUP:
                     HighlightForShipPlacement();
                     break;
                 case BattleshipTurn.GAME_OVER:

@@ -9,8 +9,10 @@ namespace Games.Battleship
     public class Ship
     {
         public int shipLength;
+        public bool isSunk = false;
+        public bool isPlaced = false;
         public BattleshipShipType shipType;
-        public List<PlayerTile> occupiedTiles; // List of the tiles this ship currently occupies.
+        public List<NetworkPlayerTile> occupiedTiles; // List of the tiles this ship currently occupies.
 
         public Ship(BattleshipShipType type)
         {
@@ -19,7 +21,7 @@ namespace Games.Battleship
 
         public void Initialize(BattleshipShipType type)
         {
-            occupiedTiles = new List<PlayerTile>();
+            occupiedTiles = new List<NetworkPlayerTile>();
             shipType = type;
 
             switch (shipType)
@@ -42,9 +44,31 @@ namespace Games.Battleship
             }
         }
 
-        public void PlaceShip(List<PlayerTile> tiles)
+        public void PlaceShip(List<NetworkPlayerTile> tiles)
         {
             occupiedTiles = tiles;
+            foreach(NetworkPlayerTile tile in tiles)
+            {
+                tile.SetAsShip();
+            }
+            isPlaced = true;
+        }
+
+        public void HitShipSegment(NetworkPlayerTile tile)
+        {
+            if (occupiedTiles.Contains(tile))
+            {
+                tile.MarkAsAttacked();                
+            }
+            int hitCount = GetShipLength();
+            foreach (NetworkPlayerTile t in occupiedTiles)
+            {
+                if (t.isChecked) hitCount--;
+            }
+            if(hitCount <= 0)
+            {
+                SinkShip();
+            }
         }
 
         public int GetShipLength()
@@ -55,6 +79,15 @@ namespace Games.Battleship
         public BattleshipShipType GetShipType()
         {
             return shipType;
+        }
+
+        public void SinkShip()
+        {
+            isSunk = true;
+            foreach(NetworkPlayerTile tile in occupiedTiles)
+            {
+                tile.MarkAsSunk();
+            }
         }
     }
 }

@@ -14,5 +14,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Minesweeper.unity
     guid: 627d13be56bd6b745aa06829eb7af898
+  - enabled: 1
+    path: Assets/Scenes/Battleship.unity
+    guid: b3b7b3bba479de848b6d162011f0cc03
+  - enabled: 1
+    path: Assets/Scenes/NetworkBattleship.unity
+    guid: d5fd76d3de5e30142a385da5b2621f36
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

@@ -63,5 +63,10 @@ namespace Games.Battleship
             color.a = Mathf.Clamp(alpha, minTransparency, maxTransparency);
             tileMaterial.color = color;
         }
+
+        public Vector2Int GetCoordinatesAsVector2Int()
+        {
+            return new Vector2Int((int)coordinates.x, (int)coordinates.y);
+        }
     }
 }
