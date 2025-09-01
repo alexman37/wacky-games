@@ -123,8 +123,8 @@ namespace Games.Battleship
                     Vector2Int position = new Vector2Int(col, row);  // Same coordinate system as ship grid
                     Vector3 worldPositionShotTile = new Vector3(
                         col * DEFAULT_SPACING_X,        // X increases left to right (same as ship grid)
-                        DEFAULT_HEIGHT + (rowCount - 1 - row) * DEFAULT_SPACING_Z,  // Y decreases top to bottom for vertical tiles
-                        0                               // Consistent Z = 0 for all attack tiles
+                        DEFAULT_HEIGHT + 1 + (rowCount - 1 - row) * DEFAULT_SPACING_Z,  // Y decreases top to bottom for vertical tiles
+                        0.75f                               // Consistent Z = 0 for all attack tiles
                     );
 
                     GameObject shotTile = Instantiate(AttackTile, worldPositionShotTile, Quaternion.Euler(-90, 0, 0));
