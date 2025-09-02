@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Unity.Netcode;
+using UnityEngine;
 
 
 namespace Games.Battleship
@@ -13,8 +14,6 @@ namespace Games.Battleship
         public NetworkVariable<bool> isReady = new NetworkVariable<bool>();
         public int totalShipValue = 0;
         public List<NetworkPlayerTile> shipTiles = new List<NetworkPlayerTile>(); // To represent this player's ships
-        public List<NetworkShotTile> checkedTiles = new List<NetworkShotTile>(); // To represent which tiles this player has checked
-        public List<NetworkPlayerTile> tilesEnemyHit = new List<NetworkPlayerTile>(); // To represent which tiles of the player have been attacked
         public List<BattleshipShipType> playerBattleships;
         public BattleshipRotation shipRotation = BattleshipRotation.HORIZONTAL; // When the player is hovering tiles, what rotation is the ship in?
         public BattleshipShipType selectedShipType;
@@ -68,7 +67,7 @@ namespace Games.Battleship
             {
                 cameraManager = gameObject.AddComponent<NetworkCameraManager>();
             }
-        }
+        }   
 
         public void Update()
         {
@@ -93,12 +92,6 @@ namespace Games.Battleship
                 case BattleshipTurn.PLAYER1:
                     if (OwnerClientId == 0)
                     {
-                        // Automatically switch to attack view when it's your turn
-                        if (cameraManager != null)
-                        {
-                            cameraManager.SetAttackBoardView();
-                        }
-
                         if (Input.GetKeyDown(KeyCode.R))
                         {
                             cameraManager?.ToggleCameraView();
@@ -117,12 +110,6 @@ namespace Games.Battleship
                 case BattleshipTurn.PLAYER2:
                     if (OwnerClientId == 1)
                     {
-                        // Automatically switch to attack view when it's your turn
-                        if (cameraManager != null)
-                        {
-                            cameraManager.SetAttackBoardView();
-                        }
-
                         if (Input.GetKeyDown(KeyCode.R))
                         {
                             cameraManager?.ToggleCameraView();
@@ -188,9 +175,6 @@ namespace Games.Battleship
             {
                 Debug.Log("Ship placement valid - placing ship");
 
-                // Store ship data on server only
-                ServerStoreShipData(positions, shipType);
-
                 // Send to the specific client that made the request
                 if (OwnerClientId == 0) // Host player
                 {
@@ -249,9 +233,8 @@ namespace Games.Battleship
             {
                 if (isReady.Value == true)
                 {
-                    manager.myShipPlacementUI.ClosePanel();
+                    manager.myShipPlacementUI.OpenPanel();
                 }
-                Debug.Log($"[{PlayerName}] Refreshing ship placement UI");
                 manager.myShipPlacementUI.ShowShipPlacementPanel();
                 UpdateShipUI(shipToPlace);
             }
@@ -264,7 +247,7 @@ namespace Games.Battleship
         private Ship FindUnplacedShipOfType(BattleshipShipType shipType)
         {
             // Find the ship in our battleships list that matches the type and isn't placed
-            if (manager.myShipPlacementUI?.shipsToInstantiate != null)
+            if (manager.myShipPlacementUI.shipsToInstantiate != null)
             {
                 foreach (Ship ship in manager.myShipPlacementUI.shipsToInstantiate)
                 {
@@ -326,24 +309,6 @@ namespace Games.Battleship
         {
             Debug.Log("Ship placement was rejected by server");
             // Handle rejection here
-        }
-
-        // Server-only method to store ship data
-        private void ServerStoreShipData(List<Vector2Int> positions, BattleshipShipType shipType)
-        {
-            if (!IsHost) return;
-
-            // Create a server-side ship record
-            ServerShipData shipData = new ServerShipData
-            {
-                shipType = shipType,
-                positions = positions,
-                playerId = OwnerClientId,
-                isDestroyed = false
-            };
-
-            // Store in server-side data structure (you'll need to create this)
-            manager.StorePlayerShip(OwnerClientId, shipData);
         }
 
         private bool ValidateShipPlacement(List<Vector2Int> positions, BattleshipShipType shipType)
@@ -532,7 +497,6 @@ namespace Games.Battleship
                 if (tile.coordinates == position && tile.isShip)
                 {
                     tile.isChecked = true; // Mark as hit
-                    tilesEnemyHit.Add(tile);
                     totalShipValue--;
                     return true;
                 }

@@ -28,7 +28,6 @@ namespace Games.Battleship
         public override void Enter()
         {
             Debug.Log("Entering Start State");
-            BattleshipCameraManager.Initialize();
             // Show start menu, initialize game parameters
         }
 
@@ -47,11 +46,6 @@ namespace Games.Battleship
 
     public class NetworkPlaceShipsState : NetworkBattleshipGameState
     {
-        private bool player1Ready = false;
-        private bool player2Ready = false;
-
-        public void SetPlayer1Ready() { player1Ready = true; }
-        public void SetPlayer2Ready() { player2Ready = true; }
         public NetworkPlaceShipsState(NetworkBattleshipManager manager) : base(manager) { }
 
         // TODO: Add ship placement UI
@@ -59,7 +53,7 @@ namespace Games.Battleship
         {
             Debug.Log("Entering Setup State");
             manager.currentTurn.Value = BattleshipTurn.SHIP_SETUP;
-
+          
             // Only show the UI if this is the local machine's NetworkBattleshipManager
             if (manager.myShipPlacementUI != null)
             {
@@ -72,18 +66,7 @@ namespace Games.Battleship
                 Debug.LogError($"[{(manager.IsHost ? "HOST" : "CLIENT")}] myShipPlacementUI is null!");
             }
         }
-        public void SetPlayerReady()
-        {
-            Debug.Log($"SetPlayerReady called for {(manager.IsHost ? "HOST" : "CLIENT")}");
 
-            // Use NetworkBattleshipManager's NetworkVariables to track readiness
-            NetworkPlayer localPlayer = manager.GetLocalPlayer();
-            if (localPlayer != null)
-            {
-                localPlayer.isReady.Value = true;
-                Debug.Log($"Player {localPlayer.PlayerName} marked as ready");
-            }
-        }
         public override void Update()
         {
             NetworkPlayer localPlayer = manager.GetLocalPlayer();

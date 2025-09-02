@@ -64,7 +64,11 @@ namespace Games.Battleship
 
         public void SetPlayerBoardView()
         {
-            if (!IsOwner || playerCamera == null) return;
+            if (!IsOwner || playerCamera == null)
+            {
+                if(!IsOwner) Debug.Log("Not the owner, no set player board view");
+                if(playerCamera == null) Debug.Log("No player camera, no set player board view");
+            }
 
             playerCamera.transform.position = playerBoardPosition;
             playerCamera.transform.rotation = Quaternion.Euler(playerBoardRotation);
@@ -73,7 +77,11 @@ namespace Games.Battleship
 
         public void SetAttackBoardView()
         {
-            if (!IsOwner || playerCamera == null) return;
+            if (!IsOwner || playerCamera == null)
+            {
+                if (!IsOwner) Debug.Log("Not the owner, no set attack board view");
+                if (playerCamera == null) Debug.Log("No player camera, no set attack board view");
+            }
 
             playerCamera.transform.position = attackBoardPosition;
             playerCamera.transform.rotation = Quaternion.Euler(attackBoardRotation);
@@ -82,49 +90,23 @@ namespace Games.Battleship
 
         public void ToggleCameraView()
         {
-            if (!IsOwner) return;
+            Debug.Log("Toggling camera view");
+            if (!IsOwner)
+            {
+                Debug.Log("Not the owner, no toggle camera view" );
+                return;
+            }
 
             if (isLookingAtPlayerBoard)
             {
+                Debug.Log("Switching to attack board view");
                 SetAttackBoardView();
             }
             else
             {
+                Debug.Log("Switching to player board view");
                 SetPlayerBoardView();
             }
-        }
-
-        // Smooth transition between views
-        public void SmoothTransitionTo(Vector3 targetPosition, Vector3 targetRotation)
-        {
-            if (!IsOwner || playerCamera == null) return;
-
-            StartCoroutine(SmoothCameraTransition(targetPosition, targetRotation));
-        }
-
-        private System.Collections.IEnumerator SmoothCameraTransition(Vector3 targetPos, Vector3 targetRot)
-        {
-            Vector3 startPos = playerCamera.transform.position;
-            Quaternion startRot = playerCamera.transform.rotation;
-            Quaternion targetRotQuat = Quaternion.Euler(targetRot);
-
-            float elapsedTime = 0;
-            float transitionDuration = 1f / turnSpeed;
-
-            while (elapsedTime < transitionDuration)
-            {
-                elapsedTime += Time.deltaTime;
-                float t = elapsedTime / transitionDuration;
-                t = Mathf.SmoothStep(0f, 1f, t);
-
-                playerCamera.transform.position = Vector3.Lerp(startPos, targetPos, t);
-                playerCamera.transform.rotation = Quaternion.Lerp(startRot, targetRotQuat, t);
-
-                yield return null;
-            }
-
-            playerCamera.transform.position = targetPos;
-            playerCamera.transform.rotation = targetRotQuat;
         }
     }
 }

@@ -162,13 +162,13 @@ MonoBehaviour:
     m_InternalValue: 0
   totalShipValue: 0
   shipTiles: []
-  checkedTiles: []
-  tilesEnemyHit: []
   playerBattleships: 
   shipRotation: 0
   selectedShipType: 0
   isHostPlayer: 0
   cameraManager: {fileID: 0}
+  shipPlacementUIPrefab: {fileID: 4729237289383878043, guid: 0533cb432892b5b40a46056772f7ef54, type: 3}
+  shipPlacementUI: {fileID: 0}
 --- !u!114 &3716564719619261080
 MonoBehaviour:
   m_ObjectHideFlags: 0

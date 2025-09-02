@@ -95,7 +95,7 @@ namespace Games.Battleship
         //It says Open Widget but it really just opens and closes it, so we can use the same one to "close" it
         public void ClosePanel()
         {
-            shipPlacementPanel.GetComponent<WidgetPopup>().openWidgetPopup();
+            shipPlacementPanel.GetComponent<WidgetPopup>().closeWidgetPopup();
         }
 
     }

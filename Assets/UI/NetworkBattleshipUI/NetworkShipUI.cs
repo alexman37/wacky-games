@@ -105,7 +105,6 @@ namespace Games.Battleship
             {
                 localPlayer.selectedShipType = shipToPlace.GetShipType();
                 localPlayer.shipToPlace = shipToPlace;
-                Debug.Log($"Player selected ship: {shipToPlace.GetShipType()}");
             }
         }
     }

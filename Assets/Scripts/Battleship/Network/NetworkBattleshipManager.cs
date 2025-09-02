@@ -16,9 +16,6 @@ namespace Games.Battleship
 
         public NetworkVariable<BattleshipTurn> currentTurn = new NetworkVariable<BattleshipTurn>();
 
-        // Server-only ship storage
-        private Dictionary<ulong, List<ServerShipData>> playerShips = new Dictionary<ulong, List<ServerShipData>>();
-
         // Network variables to track readiness
         public NetworkVariable<bool> hostPlayerReady = new NetworkVariable<bool>();
         public NetworkVariable<bool> clientPlayerReady = new NetworkVariable<bool>();
@@ -66,13 +63,8 @@ namespace Games.Battleship
         public void InitializePlayer(NetworkPlayer player)
         {
             Debug.Log($"Initializing player: {player.PlayerName}");
-            // Race condition check
-            if (shipTypes == null || shipTypes.Count == 0)
-            {
-                Debug.LogError("Ship types not initialized in NetworkBattleshipManager!");
-                shipTypes = BattleshipGameModes.GetShipTypes(gameMode);
-            }
-            // Initialize the player with ship types
+
+            shipTypes = BattleshipGameModes.GetShipTypes(gameMode);
             player.Initialize(shipTypes);
 
             // Host is always ClientId 0, each client is ClientId 1, 2, etc.
@@ -127,7 +119,6 @@ namespace Games.Battleship
             {
                 Debug.LogError($"[{(IsHost ? "HOST" : "CLIENT")}] myShipPlacementUI is NULL!");
             }
-
             NotifyGridReadyRpc(isClient);
         }
 
@@ -232,42 +223,7 @@ namespace Games.Battleship
             {
                 return GetRemotePlayer();
             }
-        }
-
-        public void StorePlayerShip(ulong playerId, ServerShipData shipData)
-        {
-            if (!IsHost) return;
-
-            if (!playerShips.ContainsKey(playerId))
-            {
-                playerShips[playerId] = new List<ServerShipData>();
-            }
-
-            playerShips[playerId].Add(shipData);
-            Debug.Log($"Server stored ship for player {playerId}: {shipData.shipType} at {string.Join(", ", shipData.positions)}");
-        }
-
-        // Modified attack processing that uses server-side ship data
-        public bool CheckHitAtPosition(ulong playerId, Vector2Int position)
-        {
-            if (!IsHost) return false;
-
-            if (playerShips.TryGetValue(playerId, out List<ServerShipData> ships))
-            {
-                foreach (ServerShipData ship in ships)
-                {
-                    if (ship.IsHit(position) && !ship.isDestroyed)
-                    {
-                        ship.RegisterHit();
-                        Debug.Log($"Hit! Ship {ship.shipType} hit at {position}. Destroyed: {ship.isDestroyed}");
-                        return true;
-                    }
-                }
-            }
-
-            Debug.Log($"Miss at position {position} for player {playerId}");
-            return false;
-        }
+        }   
 
         // Called after attack is processed to end the current turn
         public void EndTurn()
