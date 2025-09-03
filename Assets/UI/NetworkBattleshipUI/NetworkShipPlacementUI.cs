@@ -65,6 +65,7 @@ namespace Games.Battleship
                     GameObject shipPlacement = Instantiate(battleshipPrefabs[(int)ship.GetShipType()], new Vector3(0, 0, 0), Quaternion.identity);
 
                     // CRITICAL: Use the SAME ship instance, not a new one
+                    shipPlacement.AddComponent<NetworkShipUI>();
                     shipPlacement.GetComponent<NetworkShipUI>().Initialize(ship);
                     shipPlacement.GetComponent<NetworkShipUI>().SetLocalPlayer(localPlayer);
                     shipPlacement.name = ship.GetShipType().ToString();

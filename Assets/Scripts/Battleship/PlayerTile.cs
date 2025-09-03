@@ -14,11 +14,36 @@ namespace Games.Battleship
     {
         public bool isChecked = false;
         public bool isShip = false;
-        List<BattleshipTile> tilesToHighlight = new List<BattleshipTile>();
+        private static List<BattleshipTile> tilesToHighlight = new List<BattleshipTile>();
 
         public void OnMouseDown()
         {
             Debug.Log($"Slishhhh " + coordinates);
+            List<PlayerTile> tilesSelected = new List<PlayerTile>();
+            //Since we can assume the tiles are already highlighted, we can just use those
+            if (BattleshipManager.Instance.selectedShipType != BattleshipShipType.NONE && tilesToHighlight.Count > 0)
+            {
+                foreach (BattleshipTile tile in tilesToHighlight)
+                {
+                    if (tile is PlayerTile playerTile)
+                    {
+                        tilesSelected.Add(playerTile);
+                    }
+                }
+            }
+            else
+            {
+                return; // No tiles highlighted, nothing to do
+            }
+            if (GridManager.Instance.AttemptToPlaceShip(tilesSelected))
+            {
+                GridManager.Instance.StopTransparencyChangeTiles(tilesToHighlight);
+            }
+            else
+            {
+                Debug.Log("Ship placement failed");
+            }
+            tilesToHighlight.Clear();
         }
 
         // If the player has a ship selected (i.e. during the ship placement phase), we want to highlight
@@ -46,6 +71,12 @@ namespace Games.Battleship
         {
             GridManager.Instance.StopTransparencyChangeTiles(tilesToHighlight);
             tilesToHighlight.Clear();
+        }
+
+        public void SetAsShip()
+        {
+            isShip = true;
+            GetComponent<MeshRenderer>().material.color = Color.green;
         }
 
         public void HighlightForShipPlacement()

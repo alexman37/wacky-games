@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4082160240425559220}
   - component: {fileID: 8221582457773138144}
   - component: {fileID: 8247689914637879545}
-  - component: {fileID: 5643265082708950843}
   m_Layer: 5
   m_Name: CarrierTmp
   m_TagString: Untagged
@@ -77,18 +76,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5643265082708950843
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1316410253082923132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ade39ddc59f63e4c95c4be9e8403303, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6621415623967629864
 GameObject:
   m_ObjectHideFlags: 0

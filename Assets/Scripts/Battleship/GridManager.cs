@@ -155,5 +155,32 @@ namespace Games.Battleship
                 }
             }
         }
+
+        // Attempts to add a ship which occupies all designated tiles
+        // Returns true if the ship was successfully placed, false otherwise
+        // This is so the tile we clicked on can decide whether or not to place the ship visually
+        // and whether or not to remove the highlights on it
+        public bool AttemptToPlaceShip(List<PlayerTile> tilesSelected)
+        {
+            //Check if any of the tiles are a ship. If so, don't even bother
+            foreach (PlayerTile tile in tilesSelected)
+            {
+                if (tile.isShip)
+                {
+                    return false;
+                }
+            }
+            // communicate to the correct player that a ship was placed
+            BattleshipManager.Instance.player1Component.shipTiles.AddRange(tilesSelected);
+            // if that worked - visually change the tile to indicate there is a ship here
+            foreach (PlayerTile tile in tilesSelected)
+            {
+                tile.SetAsShip();
+            }
+            // clear out ship to place since we set it successfully
+            BattleshipManager.Instance.selectedShipType = BattleshipShipType.NONE;
+
+            return true;
+        }
     }
 }

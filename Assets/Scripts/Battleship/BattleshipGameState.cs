@@ -37,7 +37,7 @@ namespace Games.Battleship
             // When player chooses to start game
             if (Input.GetKeyDown(KeyCode.Space)) // Example trigger
             {
-                manager.currentTurn = BattleshipTurn.PRE_START;
+                manager.currentTurn = BattleshipTurn.SHIP_SETUP;
                 manager.ChangeState(new PlaceShipsState(manager));
             }
         }
@@ -58,7 +58,7 @@ namespace Games.Battleship
         public override void Enter()
         {
             Debug.Log("Entering Setup State");
-            manager.currentTurn = BattleshipTurn.PRE_START;
+            manager.currentTurn = BattleshipTurn.SHIP_SETUP;
             ShipPlacementUI.Instance.ShowShipPlacementPanel();
         }
 
@@ -67,7 +67,7 @@ namespace Games.Battleship
             // Check if both players have placed their ships
             if (player1Ready && player2Ready)
             {
-                ShipPlacementUI.Instance.ShowShipPlacementPanel(); //Closes ship placement UI
+                ShipPlacementUI.Instance.ClosePanel(); //Closes ship placement UI
                 manager.ChangeState(new PlayerTurnState(manager));
             }
 
