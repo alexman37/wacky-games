@@ -1107,7 +1107,7 @@ MonoBehaviour:
   clientGridReady:
     m_InternalValue: 0
   myGridManager: {fileID: 0}
-  gameMode: 0
+  gameMode: 1
   startCamera: {fileID: 1946975818}
 --- !u!4 &625054621
 Transform:
@@ -1971,12 +1971,12 @@ GameObject:
   - component: {fileID: 1266885204}
   - component: {fileID: 1266885203}
   m_Layer: 5
-  m_Name: TopBar
+  m_Name: TopBar(Reset button? Pause?)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1266885202
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2030,7 +2030,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03b74b93dd1ed1a45a28513952cd0cdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DONE: 0
+  DONE: 1
   focalPoint: 6
   percentPosition: {x: 0.5, y: 1}
   percentScale: {x: 1, y: 0.2}

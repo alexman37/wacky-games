@@ -19,6 +19,11 @@ namespace Games.Battleship
                         BattleshipShipType.SUBMARINE,
                         BattleshipShipType.DESTROYER
                     };
+                case BattleshipGameMode.HUNTER:
+                    return new List<BattleshipShipType>
+                    {
+                        BattleshipShipType.CRUISER
+                    };
                 default:
                     return new List<BattleshipShipType>();
             }

@@ -41,7 +41,6 @@ public class WidgetPopup : ScalingUIComponent
 
         movingCoroutineIn = UIUtils.XerpOnUiCoroutine(30, 0.5f, rectTransform, realStart);
         movingCoroutineOut = UIUtils.XerpOnUiCoroutine(30, 0.5f, rectTransform, realDestination);
-        openWidgetPopup();
     }
 
     // kind of inefficient to run this for every widget so...just call it when you need to

@@ -21,7 +21,7 @@ namespace Games.Battleship
         public void GetLocalPlayer(NetworkPlayer player)
         {
             Debug.Log($"[NetworkShipPlacementUI] GetLocalPlayer called with player: {player?.PlayerName}");
-            localPlayer = player;
+            localPlayer = player;           
         }
 
         public void ShipsToPlace(List<BattleshipShipType> shipTypes)
@@ -34,7 +34,6 @@ namespace Games.Battleship
                 shipsToInstantiate.Add(newShip);
                 Debug.Log($"[NetworkShipPlacementUI] Created ship: {shipType}");
             }
-
         }
 
         // We need to also call this whenever the player places a ship so we can refresh the list
@@ -89,6 +88,7 @@ namespace Games.Battleship
 
         public void OpenPanel()
         {
+            Debug.Log("Opening UI panel");
             shipPlacementPanel.GetComponent<WidgetPopup>().openWidgetPopup();
         }
 

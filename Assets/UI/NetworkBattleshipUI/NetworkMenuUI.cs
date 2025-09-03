@@ -45,6 +45,10 @@ namespace Games.Battleship
             {
                 UpdateStatus("Failed to start Host");
             }
+            else
+            {
+                UpdateStatus("Host started, waiting for client...");
+            }
         }
 
         public void StartClient()

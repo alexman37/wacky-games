@@ -85,6 +85,7 @@ namespace Games.Battleship
                 {
                     Debug.Log("Both players have placed their ships, entering PlayerTurnState.");
                     manager.currentTurn.Value = BattleshipTurn.PLAYER1; // Start with player 1
+                    manager.myShipPlacementUI.ClosePanel();
                     manager.ChangeState(new NetworkPlayerTurnState(manager));
                 }
             }

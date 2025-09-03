@@ -161,7 +161,7 @@ namespace Games.Battleship
     public enum BattleshipShipType { CARRIER, BATTLESHIP, CRUISER, SUBMARINE, DESTROYER, NONE }
     // Carrier : 5 tiles, Battleship: 4 tiles, Cruiser: 3 tiles, Submarine: 3 tiles, Destroyer: 2 tiles, Patrol Boat: 2 tiles
     // Add more as needed for different game modes.
-    public enum BattleshipGameMode { CLASSIC}
+    public enum BattleshipGameMode { CLASSIC, HUNTER }
     public enum BattleshipRotation { NONE, HORIZONTAL, VERTICAL }
 }
 

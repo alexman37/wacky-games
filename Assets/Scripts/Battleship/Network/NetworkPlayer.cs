@@ -494,7 +494,7 @@ namespace Games.Battleship
             // Check if any of our ship tiles are at this position
             foreach (NetworkPlayerTile tile in shipTiles)
             {
-                if (tile.coordinates == position && tile.isShip)
+                if (tile.coordinates == position)
                 {
                     tile.isChecked = true; // Mark as hit
                     totalShipValue--;
@@ -506,6 +506,9 @@ namespace Games.Battleship
 
         public bool AreAllShipsSunk()
         {
+            Debug.Log($"Checking if all ships are sunk for player {PlayerName}");
+            Debug.Log($"Total ship value: {totalShipValue}");
+            Debug.Log($"All ships are sunk for player {PlayerName}!");
             return totalShipValue <= 0;
         }      
         public void RotateShipPlacement()

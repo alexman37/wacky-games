@@ -12,7 +12,7 @@ namespace Games.Battleship
         public GameObject gridManagerPrefab;
 
         [Header("UI References")]
-        public NetworkShipPlacementUI myShipPlacementUI; // Add this field and set it in the inspector
+        public NetworkShipPlacementUI myShipPlacementUI;
 
         public NetworkVariable<BattleshipTurn> currentTurn = new NetworkVariable<BattleshipTurn>();
 
@@ -41,7 +41,13 @@ namespace Games.Battleship
             clientPlayerReady.OnValueChanged += OnReadinessChanged;
             hostGridReady.OnValueChanged += OnReadinessChanged;
             clientGridReady.OnValueChanged += OnReadinessChanged;
-           
+
+            if (NetworkManager.Singleton != null)
+            {
+                // Increase timeouts for internet connections
+                NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout = 10;
+            }
+
             currentTurn.Value = BattleshipTurn.PRE_START;
             
             // Each client creates their own grid manager locally
@@ -70,7 +76,9 @@ namespace Games.Battleship
             // Host is always ClientId 0, each client is ClientId 1, 2, etc.
             bool isHostPlayer = IsHost;
 
-            // Set appropriate readiness flag        
+            // Set appropriate readiness flag
+            // Doesn't seem like this is actually working, at least on local host
+            // Both the host and client go to the host player segment
             if (isHostPlayer)
             {
                 hostPlayerReady.Value = true;
@@ -228,6 +236,21 @@ namespace Games.Battleship
         // Called after attack is processed to end the current turn
         public void EndTurn()
         {
+            if (CheckWinCondition())
+            {
+                Debug.Log("Win condition met!");
+                switch (currentTurn.Value)
+                {
+                    case BattleshipTurn.PLAYER1:
+                        Debug.Log("Player 1 wins!");
+                        break;
+                    case BattleshipTurn.PLAYER2:
+                        Debug.Log("Player 2 wins!");
+                        break;
+                }
+                currentTurn.Value = BattleshipTurn.GAME_OVER;
+                ChangeState(new NetworkGameOverState(this, currentTurn.Value));               
+            }
             if (currentTurn.Value == BattleshipTurn.PLAYER1)
             {
                 Debug.Log("Ending Player 1's turn, switching to Player 2");
@@ -240,12 +263,7 @@ namespace Games.Battleship
             }
             Debug.Log($"New turn: {currentTurn.Value}");
             // Check win condition after turn
-            if (CheckWinCondition())
-            {
-                Debug.Log("Win condition met! Game over.");
-                currentTurn.Value = BattleshipTurn.GAME_OVER;
-                // TODO: Handle game over
-            }
+            
         }
 
         // Method to get reference to players after they spawn
