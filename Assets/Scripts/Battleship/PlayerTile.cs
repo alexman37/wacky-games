@@ -88,80 +88,56 @@ namespace Games.Battleship
         public void HighlightForShipPlacement()
         {
             tilesToHighlight.Clear();
-            tilesToHighlight.Add(this);
+
             BattleshipShipType shipType = BattleshipManager.Instance.selectedShipType;
-            BattleshipRotation rotation = BattleshipManager.Instance.shipRotation;
-            switch (shipType)
+            Ship ship = BattleshipManager.Instance.selectedShip;
+            if (shipType == BattleshipShipType.NONE)
             {
-                case BattleshipShipType.CARRIER:
-                    if(rotation == BattleshipRotation.HORIZONTAL)
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y - 1));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y - 2));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 1));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 2));
-                    }
-                    else
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x - 1, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x - 2, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 1, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 2, (int)coordinates.y));
-                    }
-                    break;
-                case BattleshipShipType.BATTLESHIP:
-                    if (rotation == BattleshipRotation.HORIZONTAL)
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y - 1));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 1));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 2));
-                    }
-                    else
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x - 1, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 1, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 2, (int)coordinates.y));
-                    }
-                    break;
-                case BattleshipShipType.CRUISER:
-                    if (rotation == BattleshipRotation.HORIZONTAL)
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y - 1));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 1));
-                    }
-                    else
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x - 1, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 1, (int)coordinates.y));
-                    }
-                    break;
-                case BattleshipShipType.SUBMARINE:
-                    if (rotation == BattleshipRotation.HORIZONTAL)
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y - 1));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 1));
-                    }
-                    else
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x - 1, (int)coordinates.y));
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 1, (int)coordinates.y));
-                    }
-                    break;
-                case BattleshipShipType.DESTROYER:
-                    if (rotation == BattleshipRotation.HORIZONTAL)
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x, (int)coordinates.y + 1));
-                    }
-                    else
-                    {
-                        tilesToHighlight.Add(GridManager.Instance.GetPlayerTileFromPosition((int)coordinates.x + 1, (int)coordinates.y));
-                    }
-                    break;
+                return; // No ship selected, nothing to highlight
             }
+            BattleshipRotation rotation = BattleshipManager.Instance.shipRotation;
+
+            // Get optimal placement position that includes the current tile
+            Vector2Int optimalStartPosition = ship.GetOptimalShipPlacement(this, rotation);
+
+            // Add the tiles based on the optimal position
+            int shipLength = ship.GetShipLength(shipType);
+
+            for (int i = 0; i < shipLength; i++)
+            {
+                Vector2Int tilePosition;
+                if (rotation == BattleshipRotation.HORIZONTAL)
+                {
+                    tilePosition = new Vector2Int(optimalStartPosition.x, optimalStartPosition.y + i);
+                }
+                else
+                {
+                    tilePosition = new Vector2Int(optimalStartPosition.x + i, optimalStartPosition.y);
+                }
+
+                PlayerTile tile = GetTileAtPosition(tilePosition);
+                if (tile != null)
+                {
+                    if (tile.isShip) // We need to change the material to red or something here to indicate there is a ship here
+                    {
+                        // TODO - reenable this later but be smart about "unmarking" tiles
+                        //tile.GetComponent<MeshRenderer>().material.color = Color.red;
+                    }
+                    tilesToHighlight.Add(tile);
+                }
+            }
+
             GridManager.Instance.StartTransparencyChange(tilesToHighlight, 2f);
         }
-        
-        
+
+        private PlayerTile GetTileAtPosition(Vector2Int position)
+        {
+            if (GridManager.Instance.Player1Grid.TryGetValue(position, out GameObject tileObj))
+            {
+                return tileObj.GetComponent<PlayerTile>();
+            }
+            return null;
+        }
 
     }
 }
