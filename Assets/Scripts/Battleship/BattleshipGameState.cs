@@ -6,18 +6,29 @@ namespace Games.Battleship
     /// <summary>
     /// Abstract game state class. All game states will inherit from this class.
     /// </summary>
+    /// 
+
+    // Summary of states
+    // START: The game is setting up, the player should not be able to interact with anything.
+    // PLACE SHIPS: The player is placing their ships.
+    // PLAYER TURN: Either the human (player 1) or the bot (player 2) is taking their turn
+    // PAUSE: The game is paused, players should not be able to take actions
+    // GAME OVER: The game has ended
     public abstract class BattleshipGameState
     {
         protected BattleshipManager manager;
 
+        // all state variables are in battleship manager
         public BattleshipGameState(BattleshipManager manager)
         {
             this.manager = manager;
         }
 
+        // what to do when you first change to this state?
         public virtual void Enter() { }
-        public virtual void Update() { }
+        // what to do each frame while you are in this state?
         public virtual void Exit() { }
+        // what inputs to look for while you are in this state?
         public virtual void HandleInput() { }
     }
 
@@ -35,7 +46,7 @@ namespace Games.Battleship
         public override void HandleInput()
         {
             // When player chooses to start game
-            if (Input.GetKeyDown(KeyCode.Space)) // Example trigger
+            if (Input.GetKeyDown(KeyCode.Space)) // TODO: Example trigger
             {
                 manager.currentTurn = BattleshipTurn.SHIP_SETUP;
                 manager.ChangeState(new PlaceShipsState(manager));
@@ -47,11 +58,10 @@ namespace Games.Battleship
 
     public class PlaceShipsState : BattleshipGameState
     {
+        // The single player in this game is always player 1
         private bool player1Ready = false;
-        private bool player2Ready = false;
 
         public void SetPlayer1Ready() { player1Ready = true; }
-        public void SetPlayer2Ready() { player2Ready = true; }
         public PlaceShipsState(BattleshipManager manager) : base(manager) { }
 
         // TODO: Add ship placement UI
@@ -62,28 +72,22 @@ namespace Games.Battleship
             ShipPlacementUI.Instance.ShowShipPlacementPanel();
         }
 
-        public override void Update()
-        {
-            // Check if both players have placed their ships
-            if (player1Ready && player2Ready)
-            {
-                ShipPlacementUI.Instance.ClosePanel(); //Closes ship placement UI
-                manager.ChangeState(new PlayerTurnState(manager));
-            }
-
-        }
-
         public override void HandleInput()
         {
             float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-            // Handle ship placement input for both players
-            // This could be mouse clicks on the grid to place ships
-            // For example, if player 1 places a ship, call SetPlayer1Ready()
-            // and similarly for player 2.
             
-            if(scrollInput != 0) // Allows the players to place ships horizontally or vertically
+            if(scrollInput != 0) // Allows the player to place ships horizontally or vertically
             {
                 BattleshipManager.Instance.RotateShipPlacement();
+            }
+            // TODO make an action for this somehow.
+            if(Input.GetMouseButtonDown(0))
+            {
+                if (player1Ready)
+                {
+                    ShipPlacementUI.Instance.ClosePanel(); //Closes ship placement UI
+                    manager.ChangeState(new PlayerTurnState(manager));
+                }
             }
             if (Input.GetKeyDown(KeyCode.R))
             {
@@ -97,10 +101,9 @@ namespace Games.Battleship
             }
             else if(Input.GetKeyDown(KeyCode.Space))
             {
-                // For testing purposes, we can set both players ready
+                // For testing purposes, we can set the player as ready whenever space hit
                 manager.currentTurn = BattleshipTurn.PLAYER1; //Set to player 1's turn for testing purposes
                 SetPlayer1Ready();
-                SetPlayer2Ready();
                 ShipPlacementUI.Instance.ClosePanel(); //Closes ship placement UI
             }
         }
@@ -111,18 +114,18 @@ namespace Games.Battleship
     {
         public PlayerTurnState(BattleshipManager manager) : base(manager) { }
 
-        //TODO: Add player turn UI, and disable the other player's UI if applicable.
+        //TODO: Add player turn UI
         public override void Enter()
         {
             switch (manager.currentTurn)
             {
                 case BattleshipTurn.PLAYER1:
                     Debug.Log("Player 1's Turn");
-                    // Activate player 1's UI, deactivate player 2's
+                    // Activate player 1's UI
                     break;
                 case BattleshipTurn.PLAYER2:
                     Debug.Log("Player 2's Turn");
-                    // Activate player 2's UI, deactivate player 1's
+                    // Deactivate player 1's UI
                     break;
                 default:
                     Debug.LogError("Invalid turn state!");

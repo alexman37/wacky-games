@@ -19,31 +19,37 @@ namespace Games.Battleship
         public void OnMouseDown()
         {
             Debug.Log($"Slishhhh " + coordinates);
-            List<PlayerTile> tilesSelected = new List<PlayerTile>();
-            //Since we can assume the tiles are already highlighted, we can just use those
-            if (BattleshipManager.Instance.selectedShipType != BattleshipShipType.NONE && tilesToHighlight.Count > 0)
+            
+            if(BattleshipManager.Instance.currentTurn == BattleshipTurn.SHIP_SETUP)
             {
-                foreach (BattleshipTile tile in tilesToHighlight)
+                List<PlayerTile> tilesSelected = new List<PlayerTile>();
+
+                if (BattleshipManager.Instance.selectedShipType != BattleshipShipType.NONE && tilesToHighlight.Count > 0)
                 {
-                    if (tile is PlayerTile playerTile)
+                    foreach (BattleshipTile tile in tilesToHighlight)
                     {
-                        tilesSelected.Add(playerTile);
+                        if (tile is PlayerTile playerTile)
+                        {
+                            tilesSelected.Add(playerTile);
+                        }
                     }
                 }
+                else
+                {
+                    return; // No tiles highlighted, nothing to do
+                }
+                if (GridManager.Instance.AttemptToPlaceShip(tilesSelected, BattleshipManager.Instance.selectedShip))
+                {
+                    GridManager.Instance.StopTransparencyChangeTiles(tilesToHighlight);
+                }
+                else
+                {
+                    Debug.Log("Ship placement failed");
+                    GridManager.Instance.StopTransparencyChangeTiles(tilesToHighlight);
+                }
+                tilesToHighlight.Clear();
             }
-            else
-            {
-                return; // No tiles highlighted, nothing to do
-            }
-            if (GridManager.Instance.AttemptToPlaceShip(tilesSelected))
-            {
-                GridManager.Instance.StopTransparencyChangeTiles(tilesToHighlight);
-            }
-            else
-            {
-                Debug.Log("Ship placement failed");
-            }
-            tilesToHighlight.Clear();
+            
         }
 
         // If the player has a ship selected (i.e. during the ship placement phase), we want to highlight

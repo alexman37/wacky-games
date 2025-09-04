@@ -12,16 +12,17 @@ namespace Games.Battleship
         public bool isSunk = false;
         public bool isPlaced = false;
         public BattleshipShipType shipType;
-        public List<NetworkPlayerTile> occupiedTiles; // List of the tiles this ship currently occupies.
+        public List<BattleshipTile> occupiedTiles; // List of the tiles this ship currently occupies.
 
         public Ship(BattleshipShipType type)
         {
             Initialize(type);
         }
 
+        /// When first created we only set the ship type and length, which are always constant
         public void Initialize(BattleshipShipType type)
         {
-            occupiedTiles = new List<NetworkPlayerTile>();
+            occupiedTiles = new List<BattleshipTile>();
             shipType = type;
 
             switch (shipType)
@@ -44,10 +45,28 @@ namespace Games.Battleship
             }
         }
 
-        public void PlaceShip(List<NetworkPlayerTile> tiles)
+        /// <summary>
+        /// [Multiplayer only] Designate a ship as being on all specified tiles (will be sunk if they're all hit)
+        /// </summary>
+        public void PlaceShip(IEnumerable<NetworkPlayerTile> tiles)
         {
-            occupiedTiles = tiles;
+            occupiedTiles = new List<BattleshipTile>();
+            occupiedTiles.AddRange(tiles);
             foreach(NetworkPlayerTile tile in tiles)
+            {
+                tile.SetAsShip();
+            }
+            isPlaced = true;
+        }
+
+        /// <summary>
+        /// [Singeplayer only] Designate a ship as being on all specified tiles (will be sunk if they're all hit)
+        /// </summary>
+        public void PlaceShip(IEnumerable<PlayerTile> tiles)
+        {
+            occupiedTiles = new List<BattleshipTile>();
+            occupiedTiles.AddRange(tiles);
+            foreach (PlayerTile tile in tiles)
             {
                 tile.SetAsShip();
             }

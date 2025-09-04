@@ -160,7 +160,7 @@ namespace Games.Battleship
         // Returns true if the ship was successfully placed, false otherwise
         // This is so the tile we clicked on can decide whether or not to place the ship visually
         // and whether or not to remove the highlights on it
-        public bool AttemptToPlaceShip(List<PlayerTile> tilesSelected)
+        public bool AttemptToPlaceShip(List<PlayerTile> tilesSelected, Ship ship)
         {
             //Check if any of the tiles are a ship. If so, don't even bother
             foreach (PlayerTile tile in tilesSelected)
@@ -171,7 +171,7 @@ namespace Games.Battleship
                 }
             }
             // communicate to the correct player that a ship was placed
-            BattleshipManager.Instance.player1Component.shipTiles.AddRange(tilesSelected);
+            BattleshipManager.Instance.player1Component.PlaceShip(tilesSelected, ship);
             // if that worked - visually change the tile to indicate there is a ship here
             foreach (PlayerTile tile in tilesSelected)
             {

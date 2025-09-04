@@ -6,12 +6,13 @@ namespace Games.Battleship
     public class BattleshipManager : MonoBehaviour
     {
         public static BattleshipManager Instance;
-        public const int ShipsPerPlayer = 10;
+
         public const int GridWidth = 10;
         public const int GridHeight = 10;
         public BattleshipTurn currentTurn;
         public List<BattleshipShipType> shipTypes;
         public BattleshipShipType selectedShipType;
+        public Ship selectedShip;
         public BattleshipGameMode gameMode = BattleshipGameMode.CLASSIC;
         public BattleshipRotation shipRotation; // When the player is hovering tiles, what rotation is the ship in?
         private BattleshipGameState currentState;       
@@ -49,7 +50,6 @@ namespace Games.Battleship
             if (currentState != null)
             {
                 currentState.HandleInput();
-                currentState.Update();
 
                 // Handle pause anywhere except in pause or game over states
                 if (Input.GetKeyDown(KeyCode.Escape) &&
@@ -91,10 +91,11 @@ namespace Games.Battleship
             return createdShips;
         }
 
-        public void SetShipType(BattleshipShipType shipType)
+        public void SetShipType(Ship ship)
         {
-            Debug.Log("Selected Ship Type " + shipType.ToString());
-            selectedShipType = shipType;
+            Debug.Log("Selected Ship Type " + ship.shipType.ToString());
+            selectedShipType = ship.shipType;
+            selectedShip = ship;
         }
 
         public BattleshipShipType GetSelectedShipType()

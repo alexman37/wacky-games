@@ -18,6 +18,12 @@ namespace Games.Battleship
             isPlayer1 = player1;
         }
 
+        public void PlaceShip(List<PlayerTile> tiles, Ship ship)
+        {
+            shipTiles.AddRange(tiles);
+            ship.PlaceShip(tiles);
+        }
+
         public bool AreAllShipsSunk()
         {
             return totalShipValue <= 0;

@@ -14,6 +14,15 @@ namespace Games.Battleship
         protected float minTransparency = 0.25f; //0 is completely transparent, which is too weak
         protected float maxTransparency = 0.7f; //1f is completely opaque, which is too strong
 
+        /// <summary>
+        /// Get tile's coordinates as the Vector2Int type
+        /// </summary>
+        public Vector2Int GetCoordinatesAsVector2Int()
+        {
+            return new Vector2Int((int)coordinates.x, (int)coordinates.y);
+        }
+
+        // All following methods have to do with changing the tile's transparency, for highlighting
         public void StartChangingTransparency(float duration)
         {
             if (transparencyCoroutine != null)
@@ -62,11 +71,6 @@ namespace Games.Battleship
             Color color = tileMaterial.color;
             color.a = Mathf.Clamp(alpha, minTransparency, maxTransparency);
             tileMaterial.color = color;
-        }
-
-        public Vector2Int GetCoordinatesAsVector2Int()
-        {
-            return new Vector2Int((int)coordinates.x, (int)coordinates.y);
         }
     }
 }

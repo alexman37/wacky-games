@@ -82,7 +82,7 @@ namespace Games.Battleship
 
                 OnShipSelected?.Invoke(this);
 
-                BattleshipManager.Instance.SetShipType(shipData.GetShipType());
+                BattleshipManager.Instance.SetShipType(shipData);
             }
         }
     }

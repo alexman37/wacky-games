@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Games.Battleship
 {
+    /// Camera for battleship
     public static class BattleshipCameraManager
     {
         public static Camera MainCamera { get; private set; }
@@ -22,6 +23,7 @@ namespace Games.Battleship
             }
         }
 
+        // TODO will probably have to change these positions.
         public static void SetCameraPlayer1View()
         {
             if (MainCamera != null)
@@ -52,6 +54,7 @@ namespace Games.Battleship
             }
         }
 
+        // TODO a better animation for switching between the two sides.
         public static void RotateCamera()
         {
             if (MainCamera != null)
