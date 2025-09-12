@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Games.Battleship
 {
@@ -11,7 +12,7 @@ namespace Games.Battleship
         public const int GridHeight = 10;
         public BattleshipTurn currentTurn;
         public List<BattleshipShipType> shipTypes;
-        public BattleshipShipType selectedShipType;
+        public BattleshipShipType selectedShipType = BattleshipShipType.NONE;
         public Ship selectedShip;
         public BattleshipGameMode gameMode = BattleshipGameMode.CLASSIC;
         public BattleshipRotation shipRotation; // When the player is hovering tiles, what rotation is the ship in?
@@ -20,6 +21,10 @@ namespace Games.Battleship
         public GameObject playerPrefab;
         public BattleshipPlayer player1Component;
         public BattleshipPlayer player2Component;
+
+
+        public static event Action<string> changedGameState;
+
         public BattleshipManager()
         {
             if(Instance == null)
@@ -40,6 +45,8 @@ namespace Games.Battleship
             {
                 InitializeGame();
             }
+
+            changedGameState += (_) => { };
             
 
             ChangeState(new StartState(this));
@@ -116,6 +123,8 @@ namespace Games.Battleship
             {
                 currentState.Enter();
             }
+
+            changedGameState.Invoke(newState.GetType().ToString());
         }
 
         // Used for like tile highlighting depending on if its the player turn or setup phase

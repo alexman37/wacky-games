@@ -43,16 +43,6 @@ namespace Games.Battleship
             // Show start menu, initialize game parameters
         }
 
-        public override void HandleInput()
-        {
-            // When player chooses to start game
-            if (Input.GetKeyDown(KeyCode.Space)) // TODO: Example trigger
-            {
-                manager.currentTurn = BattleshipTurn.SHIP_SETUP;
-                manager.ChangeState(new PlaceShipsState(manager));
-            }
-        }
-
         // No need for Update or Exit since we haven't even started yet.
     }
 
@@ -70,6 +60,8 @@ namespace Games.Battleship
             Debug.Log("Entering Setup State");
             manager.currentTurn = BattleshipTurn.SHIP_SETUP;
             ShipPlacementUI.Instance.ShowShipPlacementPanel();
+
+            manager.selectedShipType = BattleshipShipType.NONE;
         }
 
         public override void HandleInput()

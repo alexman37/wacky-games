@@ -22,6 +22,17 @@ namespace Games.Battleship
         {
             shipTiles.AddRange(tiles);
             ship.PlaceShip(tiles);
+            BattleshipTopBarUI.instance.displayDebugInfo("Placed ship " + ship.shipType);
+            totalShipValue++;
+            if(totalShipValue >= ShipPlacementUI.Instance.createdShips.Count)
+            {
+                BattleshipTopBarUI.instance.displayDebugInfo("All ships placed... ");
+                ShipPlacementUI.Instance.ClosePanel();
+
+                // TODO Flip a coin? Roll dice? Determine some way of who goes first?
+                BattleshipManager.Instance.currentTurn = BattleshipTurn.PLAYER1;
+                BattleshipManager.Instance.ChangeState(new PlayerTurnState(BattleshipManager.Instance));
+            }
         }
 
         public bool AreAllShipsSunk()

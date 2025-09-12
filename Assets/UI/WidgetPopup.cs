@@ -7,6 +7,7 @@ public class WidgetPopup : ScalingUIComponent
     public static string activeWidget = null;
     public string widgetId;
     public bool overrideOtherWidgets = false; // if true, this widget can open even when others are already opened
+    public bool beginsOpened = false;
 
     public Vector2 proportionalDestination;
     private Vector2 realDestination;
@@ -41,6 +42,8 @@ public class WidgetPopup : ScalingUIComponent
 
         movingCoroutineIn = UIUtils.XerpOnUiCoroutine(30, 0.5f, rectTransform, realStart);
         movingCoroutineOut = UIUtils.XerpOnUiCoroutine(30, 0.5f, rectTransform, realDestination);
+
+        if (beginsOpened) openWidgetPopup();
     }
 
     // kind of inefficient to run this for every widget so...just call it when you need to
