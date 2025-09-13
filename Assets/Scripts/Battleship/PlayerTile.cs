@@ -130,17 +130,18 @@ namespace Games.Battleship
         }
 
         // Called by the CPU player when taking their turn
-        public bool ShootThisTile()
+        public (bool, bool) ShootThisTile()
         {
             tileChecked = true;
+            bool stillStanding = true;
 
             MeshRenderer hitMarkerRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
 
             if (hasShip)
             {
                 //hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit
-                bool stillStanding = shipPresent.HitShipSegment(this);
-                if (stillStanding) BattleshipManager.Instance.player2Component.loseShip();
+                stillStanding = shipPresent.HitShipSegment(this);
+                if (!stillStanding) BattleshipManager.Instance.player2Component.loseShip();
             }
             else
             {
@@ -148,7 +149,7 @@ namespace Games.Battleship
             }
             hitMarkerRenderer.enabled = true; // Show the hit marker
 
-            return hasShip;
+            return (hasShip, stillStanding);
         }
 
         private PlayerTile GetTileAtPosition(Vector2Int position)
