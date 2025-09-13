@@ -70,9 +70,16 @@ namespace Games.Battleship
             
             if(scrollInput != 0) // Allows the player to place ships horizontally or vertically
             {
-                BattleshipManager.Instance.RotateShipPlacement();
+                if (manager.shipRotation == BattleshipRotation.HORIZONTAL)
+                {
+                    manager.shipRotation = BattleshipRotation.VERTICAL;
+                }
+                else
+                {
+                    manager.shipRotation = BattleshipRotation.HORIZONTAL;
+                }
             }
-            // TODO make an action for this somehow.
+            // TODO I do not understand what this is doing.
             if(Input.GetMouseButtonDown(0))
             {
                 if (player1Ready)
@@ -109,20 +116,8 @@ namespace Games.Battleship
         //TODO: Add player turn UI
         public override void Enter()
         {
-            switch (manager.currentTurn)
-            {
-                case BattleshipTurn.PLAYER1:
-                    Debug.Log("Player 1's Turn");
-                    // Activate player 1's UI
-                    break;
-                case BattleshipTurn.PLAYER2:
-                    Debug.Log("Player 2's Turn");
-                    // Deactivate player 1's UI
-                    break;
-                default:
-                    Debug.LogError("Invalid turn state!");
-                    break;
-            }          
+            Debug.Log("Player 1's Turn");
+            BattleshipTopBarUI.instance.displayDebugInfo("It's your Turn");
         }
 
         // TODO: Check player input for attacks. Maybe we can do both keyboard input and mouse input
@@ -134,26 +129,17 @@ namespace Games.Battleship
                 BattleshipCameraManager.RotateCamera();
             }
         }
+    }
 
-        public void EndTurn()
+    public class CPUTurnState : BattleshipGameState
+    {
+        public CPUTurnState(BattleshipManager manager) : base(manager) { }
+
+        //TODO: Add player turn UI
+        public override void Enter()
         {
-            // Check win condition
-            if (manager.CheckWinCondition())
-            {
-                manager.ChangeState(new GameOverState(manager, manager.currentTurn));
-            }
-            else
-            {
-                if(manager.currentTurn == BattleshipTurn.PLAYER1)
-                {
-                    manager.currentTurn = BattleshipTurn.PLAYER2;
-                }
-                else
-                {
-                    manager.currentTurn = BattleshipTurn.PLAYER1;
-                }
-                manager.ChangeState(new PlayerTurnState(manager));
-            }
+            Debug.Log("Player 2's Turn");
+            BattleshipTopBarUI.instance.displayDebugInfo("The bot is thinking");
         }
     }
 

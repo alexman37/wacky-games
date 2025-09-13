@@ -1,6 +1,7 @@
 using Games.Minesweeper;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Games.Battleship
 {
@@ -35,6 +36,23 @@ namespace Games.Battleship
                 createdShips.Add(shipPlacement);
             }
             shipPlacementPanel.GetComponent<WidgetPopup>().openWidgetPopup();
+        }
+
+        // Place a ship, gray it out or cross it out from this menu (or something)
+        public void PlaceShip(BattleshipShipType shipType)
+        {
+            Debug.Log(createdShips.Count);
+            foreach(GameObject g in createdShips)
+            {
+                Debug.Log(g.GetComponent<ShipUI>().shipData.shipType);
+                ShipUI shipUI = g.GetComponent<ShipUI>();
+                if (shipUI.shipData.shipType == shipType)
+                {
+                    // TODO something more sophisticated for crossing out a ship.
+                    g.transform.GetChild(0).GetComponent<Image>().color = Color.gray;
+                    shipUI.FinalizePlacement();
+                }
+            }
         }
 
         //It says Open Widget but it really just opens and closes it, so we can use the same one to "close" it

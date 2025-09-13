@@ -12,8 +12,6 @@ namespace Games.Battleship
     /// </summary>
     public class NetworkPlayerTile : BattleshipTile
     {
-        public bool isChecked = false;
-        public bool isShip = false;
         List<BattleshipTile> tilesToHighlight = new List<BattleshipTile>();
         BattleshipRotation currentRotation = BattleshipRotation.NONE;
         public List<Material> materialsList = new List<Material>();
@@ -56,7 +54,7 @@ namespace Games.Battleship
 
         public void SetAsShip()
         {
-            isShip = true;
+            tileChecked = true;
             GetComponent<MeshRenderer>().material = materialsList[2];
         }
 
@@ -84,7 +82,7 @@ namespace Games.Battleship
             // Reset the color of the tile
             foreach(NetworkPlayerTile tile in tilesToHighlight)
             {
-                if (tile.isShip) //Set this to a color for now, later we won't have a check here.
+                if (tile.hasShip) //Set this to a color for now, later we won't have a check here.
                 {
                     tile.GetComponent<MeshRenderer>().material = materialsList[2];
                 }
@@ -130,7 +128,7 @@ namespace Games.Battleship
                 NetworkPlayerTile tile = GetTileAtPosition(tilePosition);
                 if (tile != null)
                 {
-                    if (tile.isShip) // We need to change the material to red or something here to indicate there is a ship here
+                    if (tile.hasShip) // We need to change the material to red or something here to indicate there is a ship here
                     {
                         tile.GetComponent<MeshRenderer>().material = materialsList[1];
                     }
@@ -153,10 +151,10 @@ namespace Games.Battleship
         // This is called when the opponent attacks this tile
         public void MarkAsAttacked()
         {
-            isChecked = true;
+            tileChecked = true;
             GetComponent<MeshRenderer>().material = materialsList[1];
             // You can add visual feedback here like changing material or showing hit marker
-            Debug.Log($"Player tile at {coordinates} was attacked! Hit: {isShip}");
+            Debug.Log($"Player tile at {coordinates} was attacked! Hit: {hasShip}");
         }
 
         //Called from the Ship class when it is sunk

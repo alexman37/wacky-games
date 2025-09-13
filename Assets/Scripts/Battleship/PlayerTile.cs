@@ -12,8 +12,6 @@ namespace Games.Battleship
     /// </summary>
     public class PlayerTile : BattleshipTile
     {
-        public bool isChecked = false;
-        public bool isShip = false;
         private static List<BattleshipTile> tilesToHighlight = new List<BattleshipTile>();
 
         public void OnMouseDown()
@@ -79,9 +77,10 @@ namespace Games.Battleship
             tilesToHighlight.Clear();
         }
 
-        public void SetAsShip()
+        public void SetAsShip(Ship ship)
         {
-            isShip = true;
+            hasShip = true;
+            shipPresent = ship;
             GetComponent<MeshRenderer>().material.color = Color.green;
         }
 
@@ -118,7 +117,7 @@ namespace Games.Battleship
                 PlayerTile tile = GetTileAtPosition(tilePosition);
                 if (tile != null)
                 {
-                    if (tile.isShip) // We need to change the material to red or something here to indicate there is a ship here
+                    if (tile.hasShip) // We need to change the material to red or something here to indicate there is a ship here
                     {
                         // TODO - reenable this later but be smart about "unmarking" tiles
                         //tile.GetComponent<MeshRenderer>().material.color = Color.red;

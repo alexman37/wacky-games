@@ -14,6 +14,10 @@ namespace Games.Battleship
         protected float minTransparency = 0.25f; //0 is completely transparent, which is too weak
         protected float maxTransparency = 0.7f; //1f is completely opaque, which is too strong
 
+        public bool tileChecked; // the value (hit or miss) has been revealed
+        public bool hasShip; // represents a hit
+        public Ship shipPresent; // if there is a ship here, which one is it?
+
         /// <summary>
         /// Get tile's coordinates as the Vector2Int type
         /// </summary>

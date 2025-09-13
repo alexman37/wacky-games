@@ -14,21 +14,18 @@ namespace Games.Battleship
     /// </summary>
     public class ShotTile : BattleshipTile
     {
-        public bool isEnemyShip = false; // Indicates whether this tile is an enemy ship tile or not
-        public bool hasBeenShot = false; // Indicates whether this tile has been shot at
         public Material hitMaterial; // Material to apply when the tile is hit
         public Material missMaterial; // Material to apply when the tile is missed
 
         public void OnMouseEnter()
         {
-            if(hasBeenShot)
+            if(tileChecked)
             {
                 return; // Don't highlight if the tile has already been shot at
             }
             switch (BattleshipManager.Instance.GetCurrentTurn())
             {
                 case BattleshipTurn.PLAYER1:
-                case BattleshipTurn.PLAYER2:
                     HighlightForAttacking();
                     break;
                 default:
@@ -43,20 +40,26 @@ namespace Games.Battleship
 
         public void OnMouseDown()
         {
-            if (hasBeenShot)
+            if (tileChecked)
             {
                 return; // Don't highlight if the tile has already been shot at
             }
             switch (BattleshipManager.Instance.GetCurrentTurn())
             {
                 case BattleshipTurn.PLAYER1:
-                case BattleshipTurn.PLAYER2:
                     ShootTile();
                     break;
                 default:
                     break;
             }
             
+        }
+
+        public void SetAsShip(Ship ship)
+        {
+            hasShip = true;
+            shipPresent = ship;
+            Debug.Log("Add enemy ship to " + coordinates);
         }
 
         public void HighlightForAttacking()
@@ -69,10 +72,12 @@ namespace Games.Battleship
         {
             MeshRenderer hitMarkerRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
             Debug.Log($"Player has shot at " + coordinates);
-            hasBeenShot = true;
-            if (isEnemyShip)
+            tileChecked = true;
+            if (hasShip)
             {
-                hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit               
+                hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit
+                bool wasKillshot = shipPresent.HitShipSegment(this);
+                if (wasKillshot) BattleshipManager.Instance.player2Component.loseShip();
             }
             else
             {
@@ -80,6 +85,9 @@ namespace Games.Battleship
             }
             hitMarkerRenderer.enabled = true; // Show the hit marker
             StopChangingTransparency();
+
+            // TODO this almost certainly needs to be somewhere else
+            BattleshipManager.Instance.EndTurn();
         }
     }
 }

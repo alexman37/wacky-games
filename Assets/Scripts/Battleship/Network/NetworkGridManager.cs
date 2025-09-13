@@ -147,7 +147,7 @@ namespace Games.Battleship
             //Check if any of the tiles are a ship. If so, don't even bother sending it to the server.
             foreach(NetworkPlayerTile tile in tilesSelected)
             {
-                if (tile.isShip)
+                if (tile.hasShip)
                 {
                     return false;
                 }

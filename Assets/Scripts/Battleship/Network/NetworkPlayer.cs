@@ -407,7 +407,7 @@ namespace Games.Battleship
             // Check if any existing ship tiles occupy this position
             foreach (NetworkPlayerTile tile in shipTiles)
             {
-                if (tile.coordinates == position && tile.isShip)
+                if (tile.coordinates == position && tile.hasShip)
                     return true;
             }
             return false;
@@ -496,7 +496,7 @@ namespace Games.Battleship
             {
                 if (tile.coordinates == position)
                 {
-                    tile.isChecked = true; // Mark as hit
+                    tile.tileChecked = true; // Mark as hit
                     totalShipValue--;
                     return true;
                 }

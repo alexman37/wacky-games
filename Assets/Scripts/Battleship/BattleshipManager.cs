@@ -4,6 +4,17 @@ using System;
 
 namespace Games.Battleship
 {
+    public enum BattleshipTurn { NONE, PRE_START, SHIP_SETUP, PLAYER1, PLAYER2, GAME_OVER }
+    public enum BattleshipShipType { CARRIER, BATTLESHIP, CRUISER, SUBMARINE, DESTROYER, NONE }
+    // Carrier : 5 tiles, Battleship: 4 tiles, Cruiser: 3 tiles, Submarine: 3 tiles, Destroyer: 2 tiles, Patrol Boat: 2 tiles
+    // Add more as needed for different game modes.
+    public enum BattleshipGameMode { CLASSIC, HUNTER }
+    public enum BattleshipRotation { NONE, HORIZONTAL, VERTICAL }
+
+
+
+
+
     public class BattleshipManager : MonoBehaviour
     {
         public static BattleshipManager Instance;
@@ -20,7 +31,7 @@ namespace Games.Battleship
         private List<Ship> createdShips; //List of ship objects created by the gamemode.
         public GameObject playerPrefab;
         public BattleshipPlayer player1Component;
-        public BattleshipPlayer player2Component;
+        public BattleshipAI player2Component;
 
 
         public static event Action<string> changedGameState;
@@ -82,13 +93,14 @@ namespace Games.Battleship
             GameObject player1 = Instantiate(playerPrefab);
             player1.name = "Player 1";
             player1Component = player1.GetComponent<BattleshipPlayer>();
-            player1Component.Initialize(shipTypes, true);
+            player1Component.Initialize(true);
 
-
-            GameObject player2 = Instantiate(playerPrefab);
+            // easier to just build the CPU player from scratch
+            GameObject player2 = new GameObject();
             player2.name = "Player 2";
-            player2Component = player2.GetComponent<BattleshipPlayer>();
-            player2Component.Initialize(shipTypes, false);
+            player2.AddComponent(typeof(BattleshipAI));
+            player2Component = player2.GetComponent<BattleshipAI>();
+            player2Component.Initialize(createdShips);
 
             GridManager.Instance.GenerateGrid(GridWidth, GridHeight);           
         }
@@ -150,29 +162,36 @@ namespace Games.Battleship
             return false;
         }
 
+        /// <summary>
+        /// Cycle from Player 1 to Player 2
+        /// </summary>
+        public void EndTurn()
+        {
+            // Check win condition
+            if (CheckWinCondition())
+            {
+                ChangeState(new GameOverState(this, currentTurn));
+            }
+            else
+            {
+                if (currentTurn == BattleshipTurn.PLAYER1)
+                {
+                    currentTurn = BattleshipTurn.PLAYER2;
+                    ChangeState(new CPUTurnState(this));
+                }
+                else
+                {
+                    currentTurn = BattleshipTurn.PLAYER1;
+                    ChangeState(new PlayerTurnState(this));
+                }
+            }
+        }
+
         public void ResetGame()
         {
 
         }
-
-        public void RotateShipPlacement()
-        {
-            if (shipRotation == BattleshipRotation.HORIZONTAL)
-            {
-                shipRotation = BattleshipRotation.VERTICAL;
-            }
-            else
-            {
-                shipRotation = BattleshipRotation.HORIZONTAL;
-            }
-        }
     }
-    public enum BattleshipTurn { NONE, PRE_START, SHIP_SETUP, PLAYER1, PLAYER2, GAME_OVER }
-    public enum BattleshipShipType { CARRIER, BATTLESHIP, CRUISER, SUBMARINE, DESTROYER, NONE }
-    // Carrier : 5 tiles, Battleship: 4 tiles, Cruiser: 3 tiles, Submarine: 3 tiles, Destroyer: 2 tiles, Patrol Boat: 2 tiles
-    // Add more as needed for different game modes.
-    public enum BattleshipGameMode { CLASSIC, HUNTER }
-    public enum BattleshipRotation { NONE, HORIZONTAL, VERTICAL }
 }
 
 

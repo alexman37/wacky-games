@@ -12,6 +12,7 @@ namespace Games.Battleship
     {
         public Ship shipData;
         private bool _selected = false;
+        public bool doneWithShipPlacement = false;
 
         // Static event that will be triggered when any ship is selected
         public static event Action<ShipUI> OnShipSelected;
@@ -63,26 +64,39 @@ namespace Games.Battleship
 
         private void HandleShipSelected(ShipUI selectedShip)
         {
-            // If another ship was selected, deselect this one
-            if (selectedShip != this && selected)
+            if(!doneWithShipPlacement)
             {
-                selected = false;
+                // If another ship was selected, deselect this one
+                if (selectedShip != this && selected)
+                {
+                    selected = false;
+                }
             }
+        }
+
+        // place a ship, cannot place another one
+        public void FinalizePlacement()
+        {
+            selected = false;
+            doneWithShipPlacement = true;
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (selected)
+            if(!doneWithShipPlacement)
             {
-                selected = false;
-            }
-            else
-            {
-                selected = true;
+                if (selected)
+                {
+                    selected = false;
+                }
+                else
+                {
+                    selected = true;
 
-                OnShipSelected?.Invoke(this);
+                    OnShipSelected?.Invoke(this);
 
-                BattleshipManager.Instance.SetShipType(shipData);
+                    BattleshipManager.Instance.SetShipType(shipData);
+                }
             }
         }
     }

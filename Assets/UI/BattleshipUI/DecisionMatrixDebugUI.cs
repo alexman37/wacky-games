@@ -1,0 +1,67 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+namespace Games.Battleship
+{
+    public class DecisionMatrixDebugUI : MonoBehaviour
+    {
+        [SerializeField] private GameObject tileTemplate;
+        [SerializeField] private GameObject container;
+
+        public static DecisionMatrixDebugUI instance;
+
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
+        {
+            if (instance == null) instance = this;
+            else Destroy(this.gameObject);
+        }
+
+        public void redrawGrid(int[,] scores)
+        {
+            float wScale = scores.GetLength(0) / 10f;
+            float hScale = scores.GetLength(1) / 10f;
+
+            float wDim = 200f / (float) scores.GetLength(0);
+            float hDim = 200f / (float) scores.GetLength(1);
+
+            // Clear old children
+            DestroyAllChildren(container);
+
+            // Make new tiles
+            for (int w = 0; w < scores.GetLength(0); w++) 
+            {
+                for (int h = 0; h < scores.GetLength(1); h++)
+                {
+                    GameObject go = GameObject.Instantiate(tileTemplate);
+                    go.transform.SetParent(container.transform);
+
+                    Image img = go.GetComponent<Image>();
+                    TextMeshProUGUI text = go.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+                    img.rectTransform.localScale = new Vector3(wScale, hScale, 1);
+                    img.rectTransform.localPosition = new Vector3(wDim * w, hDim * h, 0);
+                    int score = scores[w, h];
+                    img.color = new Color(0.1f * score, 0, 1 - 0.1f * score);
+                    text.text = score.ToString();
+                }
+            }
+        }
+
+
+
+
+
+        // TODO should really move this to utility somewhere
+        public void DestroyAllChildren(GameObject parentObject)
+        {
+            // Iterate through the children in reverse order to avoid issues with hierarchy changes
+            for (int i = parentObject.transform.childCount - 1; i >= 0; i--)
+            {
+                // Destroy the child GameObject
+                Destroy(parentObject.transform.GetChild(i).gameObject);
+            }
+        }
+    }
+}

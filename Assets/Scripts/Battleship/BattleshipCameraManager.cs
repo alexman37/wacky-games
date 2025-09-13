@@ -30,18 +30,6 @@ namespace Games.Battleship
             {
                 MainCamera.transform.position = new Vector3(5, 13, -4);
                 MainCamera.transform.rotation = Quaternion.Euler(90,0,0);
-                MainCamera.transform.rotation = Quaternion.Slerp(MainCamera.transform.rotation, Quaternion.Euler(90, 0, 0), turnSpeed * Time.deltaTime);
-            }
-        }
-
-        public static void SetCameraPlayer1AttackBoard()
-        {
-            if (MainCamera != null)
-            {
-                //MainCamera.transform.position = new Vector3(5, 13, -4);
-                //MainCamera.transform.rotation = Quaternion.Euler(180, 0, 0);
-                MainCamera.transform.position = new Vector3(5, 5, -10);
-                MainCamera.transform.rotation = Quaternion.Euler(0, 0, 0);
             }
         }
 
@@ -49,8 +37,7 @@ namespace Games.Battleship
         {
             if (MainCamera != null)
             {
-                MainCamera.transform.position = new Vector3(0, 10, 10);
-                MainCamera.transform.LookAt(Vector3.zero);
+                MainCamera.transform.position = new Vector3(5, 13, 6);
             }
         }
 
@@ -61,7 +48,7 @@ namespace Games.Battleship
             {
                 if(LookingAtPlayerBoard)
                 {
-                    SetCameraPlayer1AttackBoard();
+                    SetCameraPlayer2View();
                     LookingAtPlayerBoard = false;
                 }
                 else

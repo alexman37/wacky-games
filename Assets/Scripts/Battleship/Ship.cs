@@ -68,7 +68,21 @@ namespace Games.Battleship
             occupiedTiles.AddRange(tiles);
             foreach (PlayerTile tile in tiles)
             {
-                tile.SetAsShip();
+                tile.SetAsShip(this);
+            }
+            isPlaced = true;
+        }
+
+        /// <summary>
+        /// [Singeplayer only] Designate a ship as being on all specified tiles (will be sunk if they're all hit)
+        /// </summary>
+        public void PlaceShip(IEnumerable<ShotTile> tiles)
+        {
+            occupiedTiles = new List<BattleshipTile>();
+            occupiedTiles.AddRange(tiles);
+            foreach (ShotTile tile in tiles)
+            {
+                tile.SetAsShip(this);
             }
             isPlaced = true;
         }
@@ -168,22 +182,26 @@ namespace Games.Battleship
             }
         }
 
-
-        public void HitShipSegment(NetworkPlayerTile tile)
+        // Return true if the ship is still standing
+        public bool HitShipSegment(BattleshipTile tile)
         {
-            if (occupiedTiles.Contains(tile))
+            // TODO mark it as attacked somewhere else.
+            /*if (occupiedTiles.Contains(tile))
             {
                 tile.MarkAsAttacked();                
-            }
+            }*/
             int hitCount = GetShipLength();
-            foreach (NetworkPlayerTile t in occupiedTiles)
+            foreach (BattleshipTile t in occupiedTiles)
             {
-                if (t.isChecked) hitCount--;
+                if (t.tileChecked) hitCount--;
             }
+            Debug.Log("Hit count of damaged ship is " + hitCount);
             if(hitCount <= 0)
             {
                 SinkShip();
+                return false;
             }
+            return true;
         }
 
         public int GetShipLength()
@@ -199,9 +217,16 @@ namespace Games.Battleship
         public void SinkShip()
         {
             isSunk = true;
-            foreach(NetworkPlayerTile tile in occupiedTiles)
+            Debug.Log("You sunk my " + shipType);
+            BattleshipTopBarUI.instance.displayDebugInfo("Sunk the ship " + shipType);
+
+            // TODO singleplayer equivalent
+            foreach(BattleshipTile tile in occupiedTiles)
             {
-                tile.MarkAsSunk();
+                if(tile is NetworkPlayerTile)
+                {
+                    (tile as NetworkPlayerTile).MarkAsSunk();
+                }
             }
         }
     }

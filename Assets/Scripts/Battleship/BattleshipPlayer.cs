@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Games.Battleship
 {
@@ -12,27 +13,46 @@ namespace Games.Battleship
         public int totalShipValue = 0;
         public bool isPlayer1 = false; // To determine which player this is
 
-        public void Initialize(List<BattleshipShipType> battleshipsToPlace, bool player1)
+        public static Action finishedPlacingPlayerShips;
+
+        private void Start()
         {
-            playerBattleships = battleshipsToPlace;
+            finishedPlacingPlayerShips += () => { };
+        }
+
+        public void Initialize(bool player1)
+        {
+            playerBattleships = new List<BattleshipShipType>();
             isPlayer1 = player1;
         }
 
         public void PlaceShip(List<PlayerTile> tiles, Ship ship)
         {
-            shipTiles.AddRange(tiles);
-            ship.PlaceShip(tiles);
-            BattleshipTopBarUI.instance.displayDebugInfo("Placed ship " + ship.shipType);
-            totalShipValue++;
-            if(totalShipValue >= ShipPlacementUI.Instance.createdShips.Count)
+            // Ignore if we've already placed this ship
+            if(!playerBattleships.Contains(ship.shipType))
             {
-                BattleshipTopBarUI.instance.displayDebugInfo("All ships placed... ");
-                ShipPlacementUI.Instance.ClosePanel();
+                shipTiles.AddRange(tiles);
+                ship.PlaceShip(tiles);
+                BattleshipTopBarUI.instance.displayDebugInfo("Placed ship " + ship.shipType);
 
-                // TODO Flip a coin? Roll dice? Determine some way of who goes first?
-                BattleshipManager.Instance.currentTurn = BattleshipTurn.PLAYER1;
-                BattleshipManager.Instance.ChangeState(new PlayerTurnState(BattleshipManager.Instance));
+                totalShipValue++;
+                playerBattleships.Add(ship.shipType);
+                ShipPlacementUI.Instance.PlaceShip(ship.shipType);
+
+                if (totalShipValue >= ShipPlacementUI.Instance.createdShips.Count)
+                {
+                    BattleshipTopBarUI.instance.displayDebugInfo("All ships placed... ");
+                    ShipPlacementUI.Instance.ClosePanel();
+
+                    // Now place CPU ships
+                    finishedPlacingPlayerShips.Invoke();
+                }
             }
+        }
+
+        public void loseShip()
+        {
+            totalShipValue--;
         }
 
         public bool AreAllShipsSunk()

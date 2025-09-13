@@ -14,7 +14,6 @@ namespace Games.Battleship
     /// </summary>
     public class NetworkShotTile : BattleshipTile
     {
-        public bool hasBeenShot = false; // Indicates whether this tile has been shot at
         public Material hitMaterial; // Material to apply when the tile is hit
         public Material missMaterial; // Material to apply when the tile is missed
 
@@ -27,7 +26,7 @@ namespace Games.Battleship
         }
         public void OnMouseEnter()
         {
-            if (hasBeenShot) return;
+            if (tileChecked) return;
 
             // Check if it's my turn through network manager
             if (owningGridManager != null && owningGridManager.IsMyTurn())
@@ -43,7 +42,7 @@ namespace Games.Battleship
 
         public void OnMouseDown()
         {
-            if (hasBeenShot) return;
+            if (tileChecked) return;
 
             if (owningGridManager != null && owningGridManager.IsMyTurn())
             {
@@ -64,7 +63,7 @@ namespace Games.Battleship
         {
             MeshRenderer hitMarkerRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
             Debug.Log($"Player has shot at " + coordinates);
-            hasBeenShot = true;
+            tileChecked = true;
             if (wasHit)
             {
                 hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit               
