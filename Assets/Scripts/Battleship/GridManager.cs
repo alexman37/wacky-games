@@ -45,7 +45,7 @@ namespace Games.Battleship
                     Vector3 worldPositionPlayer1Tile = new Vector3(
                         col * DEFAULT_SPACING_X,
                         DEFAULT_HEIGHT,
-                        -row * DEFAULT_SPACING_Z - 1
+                        (-BattleshipManager.GridHeight * DEFAULT_SPACING_Z) + row * DEFAULT_SPACING_Z - 1
                     );
                     Vector3 worldPositionPlayer2Tile = new Vector3(
                         col * DEFAULT_SPACING_X,

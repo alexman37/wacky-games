@@ -129,6 +129,28 @@ namespace Games.Battleship
             GridManager.Instance.StartTransparencyChange(tilesToHighlight, 2f);
         }
 
+        // Called by the CPU player when taking their turn
+        public bool ShootThisTile()
+        {
+            tileChecked = true;
+
+            MeshRenderer hitMarkerRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
+
+            if (hasShip)
+            {
+                //hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit
+                bool stillStanding = shipPresent.HitShipSegment(this);
+                if (stillStanding) BattleshipManager.Instance.player2Component.loseShip();
+            }
+            else
+            {
+                //hitMarkerRenderer.material = missMaterial; // Change the material to indicate a miss
+            }
+            hitMarkerRenderer.enabled = true; // Show the hit marker
+
+            return hasShip;
+        }
+
         private PlayerTile GetTileAtPosition(Vector2Int position)
         {
             if (GridManager.Instance.Player1Grid.TryGetValue(position, out GameObject tileObj))

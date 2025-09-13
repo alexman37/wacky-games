@@ -30,9 +30,9 @@ namespace Games.Battleship
             DestroyAllChildren(container);
 
             // Make new tiles
-            for (int w = 0; w < scores.GetLength(0); w++) 
+            for (int h = 0; h < scores.GetLength(1); h++) 
             {
-                for (int h = 0; h < scores.GetLength(1); h++)
+                for (int w = 0; w < scores.GetLength(0); w++)
                 {
                     GameObject go = GameObject.Instantiate(tileTemplate);
                     go.transform.SetParent(container.transform);
@@ -43,8 +43,21 @@ namespace Games.Battleship
                     img.rectTransform.localScale = new Vector3(wScale, hScale, 1);
                     img.rectTransform.localPosition = new Vector3(wDim * w, hDim * h, 0);
                     int score = scores[w, h];
-                    img.color = new Color(0.1f * score, 0, 1 - 0.1f * score);
-                    text.text = score.ToString();
+
+                    // -2 == miss, -1 = hit, anything else = unrevealed
+                    if(score == -2)
+                    {
+                        img.color = new Color(0.3f, 0.3f, 0.3f);
+                        text.text = "-";
+                    } else if (score == -1)
+                    {
+                        img.color = new Color(0.1f, 0.7f, 1 - 0.1f);
+                        text.text = "X";
+                    } else
+                    {
+                        img.color = new Color(0.1f * score, 0, 1 - 0.1f * score);
+                        text.text = score.ToString();
+                    }
                 }
             }
         }

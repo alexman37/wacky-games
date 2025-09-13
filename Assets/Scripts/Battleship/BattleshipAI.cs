@@ -16,6 +16,11 @@ namespace Games.Battleship
         // thinking logic
         BattleshipAI_DecisionMatrix decisionMatrix = new BattleshipAI_DecisionMatrix();
 
+        void Start()
+        {
+
+        }
+
         private void OnEnable()
         {
             finishedPlacingPlayerShips += SetupRoutine;
@@ -25,6 +30,7 @@ namespace Games.Battleship
         {
             finishedPlacingPlayerShips -= SetupRoutine;
         }
+
 
         public void Initialize(List<Ship> createdShips)
         {
@@ -126,17 +132,27 @@ namespace Games.Battleship
         /// ----------------------------------
         ///           PLAYING PHASE
         /// ----------------------------------
-        // shoot at a single completely random tile
-        public void chooseTotallyRandomTile()
+        
+        // Start the bot's turn. TODO play animations, etc...
+        public void TakeCPUTurn()
         {
+            ShootAtPlayer();
 
+            BattleshipManager.Instance.EndTurn();
         }
 
-
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        // Shoot at the player. Swap out the algorithm for determining where to shoot, if you like
+        public void ShootAtPlayer()
         {
-            
+            Vector2Int whereToShoot = decisionMatrix.getTotallyRandomTile();
+
+            Debug.Log("Would shoot at " + whereToShoot);
+
+            PlayerTile shootAtThis = GridManager.Instance.GetPlayerTileFromPosition(whereToShoot.x, whereToShoot.y);
+            bool hit = shootAtThis.ShootThisTile();
+
+            decisionMatrix.shootTile(Vector2Int.FloorToInt(shootAtThis.coordinates), hit);
+            decisionMatrix.redrawDebugViz();
         }
 
 
@@ -162,31 +178,94 @@ namespace Games.Battleship
         /// </summary>
         private class DecisionMatrixTile
         {
-            public Vector2 coordinates;
+            public Vector2Int coordinates;
             public int score; // this is what the decision matrix primarily uses
             public bool revealed;
             public bool hit;
 
             public DecisionMatrixTile(int w, int h)
             {
-                coordinates = new Vector2(w, h);
+                coordinates = new Vector2Int(w, h);
 
                 revealed = false;
                 hit = false;
             }
+
+            public void recalc()
+            {
+                score = 0;
+            }
         }
 
+        // Scores matrix - primary method of tracking which tiles to shoot at.
         private DecisionMatrixTile[,] decisionMatrix;
+        // Valid target list - fast way of seeing what tiles we can shoot at (not a set so we can get randoms from it easier)
+        private List<DecisionMatrixTile> validTargetSet;
+        // TODO - possible locations of each ship
 
         public BattleshipAI_DecisionMatrix()
         {
             decisionMatrix = new DecisionMatrixTile[BattleshipManager.GridWidth, BattleshipManager.GridHeight];
+            validTargetSet = new List<DecisionMatrixTile>();
+
             for(int w = 0; w < BattleshipManager.GridWidth; w++)
             {
                 for (int h = 0; h < BattleshipManager.GridHeight; h++)
                 {
                     decisionMatrix[w, h] = new DecisionMatrixTile(w, h);
+                    validTargetSet.Add(decisionMatrix[w, h]);
                 }
+            }
+        }
+
+
+        /// ----------------------------------
+        ///            EXTRACTION
+        /// ----------------------------------
+
+        /// <summary>
+        /// Get a completely random tile with no regard for scores or logic
+        /// </summary>
+        public Vector2Int getTotallyRandomTile()
+        {
+            DecisionMatrixTile chosen = validTargetSet[Random.Range(0, validTargetSet.Count)];
+            validTargetSet.Remove(chosen);
+            return chosen.coordinates;
+        }
+
+        // TODO
+        public Vector2Int getSmartRandomTile(float factor)
+        {
+            return new Vector2Int(0, 0);
+        }
+
+
+        /// ----------------------------------
+        ///           RECALCULATION
+        /// ----------------------------------
+
+        /// <summary>
+        /// Don't have to recalculate the entire grid when shooting a single tile - just recalculate enough surrounding area
+        /// </summary>
+        public void shootTile(Vector2Int coords, bool hit)
+        {
+            decisionMatrix[coords.x, coords.y].revealed = true;
+            decisionMatrix[coords.x, coords.y].hit = hit;
+
+            List<Ship> ships = BattleshipManager.Instance.GetShips();
+            int longestShipLength = 0;
+            foreach (Ship ship in ships) 
+                if (ship.shipLength > longestShipLength) 
+                    longestShipLength = ship.shipLength;
+
+            // For each tile
+            for (int w = Mathf.Max(0, coords.x - (longestShipLength - 1)); w < Mathf.Min(BattleshipManager.GridWidth, coords.x + longestShipLength); w++)
+            {
+                recalculateTile(w, coords.y, ships);
+            }
+            for (int h = Mathf.Max(0, coords.y - (longestShipLength - 1)); h < Mathf.Min(BattleshipManager.GridHeight, coords.y + longestShipLength); h++)
+            {
+                recalculateTile(coords.x, h, ships);
             }
         }
 
@@ -221,7 +300,9 @@ namespace Games.Battleship
             {
                 for (int h = 0; h < BattleshipManager.GridHeight; h++)
                 {
-                    scoreArr[w, h] = decisionMatrix[w, h].score;
+                    if (decisionMatrix[w, h].hit) scoreArr[w, h] = -1;
+                    else if (decisionMatrix[w, h].revealed) scoreArr[w, h] = -2;
+                    else scoreArr[w, h] = decisionMatrix[w, h].score;
                 }
             }
 
@@ -241,14 +322,17 @@ namespace Games.Battleship
 
         private void recalculateTile(int w, int h, List<Ship> ships)
         {
-            for (int s = 0; s < ships.Count; s++)
+            Debug.Log("Recalc tile " + w + ", " + h);
+            if (!decisionMatrix[w, h].revealed)
             {
-                Ship ship = ships[s];
-
-                DecisionMatrixTile tile = decisionMatrix[w, h];
-                // (ignore if already revealed)
-                if (!decisionMatrix[w, h].revealed)
+                decisionMatrix[w, h].recalc();
+                for (int s = 0; s < ships.Count; s++)
                 {
+                    Ship ship = ships[s];
+
+                    DecisionMatrixTile tile = decisionMatrix[w, h];
+                    // (ignore if already revealed)
+                
                     // For each horizontal arrangement of the ship
                     for (int lh = 0; lh < ship.shipLength; lh++)
                     {
@@ -262,7 +346,7 @@ namespace Games.Battleship
                                 break;
                             }
                         }
-                        for (int a = lh + 1; a < ship.shipLength && workingArrangement; a++)
+                        for (int a = lh; a < ship.shipLength && workingArrangement; a++)
                         {
                             if (w + a - lh >= BattleshipManager.GridWidth || decisionMatrix[w + a - lh, h].revealed)
                             {
@@ -288,7 +372,7 @@ namespace Games.Battleship
                                 break;
                             }
                         }
-                        for (int a = lv + 1; a < ship.shipLength && workingArrangement; a++)
+                        for (int a = lv; a < ship.shipLength && workingArrangement; a++)
                         {
                             if (h + a - lv >= BattleshipManager.GridHeight || decisionMatrix[w, h + a - lv].revealed)
                             {

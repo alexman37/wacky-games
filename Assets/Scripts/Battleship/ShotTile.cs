@@ -76,8 +76,8 @@ namespace Games.Battleship
             if (hasShip)
             {
                 hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit
-                bool wasKillshot = shipPresent.HitShipSegment(this);
-                if (wasKillshot) BattleshipManager.Instance.player2Component.loseShip();
+                bool stillStanding = shipPresent.HitShipSegment(this);
+                if (!stillStanding) BattleshipManager.Instance.player2Component.loseShip();
             }
             else
             {

@@ -140,6 +140,8 @@ namespace Games.Battleship
         {
             Debug.Log("Player 2's Turn");
             BattleshipTopBarUI.instance.displayDebugInfo("The bot is thinking");
+
+            manager.player2Component.TakeCPUTurn();
         }
     }
 
