@@ -86,7 +86,6 @@ namespace Games.Battleship
             shipTypes = BattleshipGameModes.GetShipTypes(gameMode);
             foreach(BattleshipShipType shipType in shipTypes)
             {
-                Debug.Log("Ship Type: " + shipType);
                 Ship newShip = new Ship(shipType);
                 createdShips.Add(newShip);
             }
@@ -112,7 +111,6 @@ namespace Games.Battleship
 
         public void SetShipType(Ship ship)
         {
-            Debug.Log("Selected Ship Type " + ship.shipType.ToString());
             selectedShipType = ship.shipType;
             selectedShip = ship;
         }
@@ -147,19 +145,19 @@ namespace Games.Battleship
 
         // Since we are checking each player here, should we return an enum or something saying specifically
         // who won?
-        public bool CheckWinCondition()
+        public WinCondition CheckWinCondition()
         {
             // Check if all ships of a player are sunk
             if (player1Component.AreAllShipsSunk())
             {
-                return true; // Player 2 wins
+                return WinCondition.PLAYER2_WIN; // Player 2 wins
             }
 
             if (player2Component.AreAllShipsSunk())
             {
-                return true; // Player 1 wins
+                return WinCondition.PLAYER1_WIN; // Player 1 wins
             }
-            return false;
+            return WinCondition.NONE;
         }
 
         /// <summary>
@@ -168,9 +166,10 @@ namespace Games.Battleship
         public void EndTurn()
         {
             // Check win condition
-            if (CheckWinCondition())
+            WinCondition winCondition = CheckWinCondition();
+            if (winCondition != WinCondition.NONE)
             {
-                ChangeState(new GameOverState(this, currentTurn));
+                ChangeState(new GameOverState(this, winCondition));
             }
             else
             {
@@ -191,7 +190,10 @@ namespace Games.Battleship
         {
 
         }
-    }
+
+        
+        }
+    public enum WinCondition { NONE, PLAYER1_WIN, PLAYER2_WIN }
 }
 
 

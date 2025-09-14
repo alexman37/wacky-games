@@ -15,9 +15,7 @@ namespace Games.Battleship
         private static List<BattleshipTile> tilesToHighlight = new List<BattleshipTile>();
 
         public void OnMouseDown()
-        {
-            Debug.Log($"Slishhhh " + coordinates);
-            
+        {            
             if(BattleshipManager.Instance.currentTurn == BattleshipTurn.SHIP_SETUP)
             {
                 List<PlayerTile> tilesSelected = new List<PlayerTile>();
@@ -136,12 +134,11 @@ namespace Games.Battleship
             bool stillStanding = true;
 
             MeshRenderer hitMarkerRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
-
             if (hasShip)
             {
                 //hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit
                 stillStanding = shipPresent.HitShipSegment(this);
-                if (!stillStanding) BattleshipManager.Instance.player2Component.loseShip();
+                if (!stillStanding) BattleshipManager.Instance.player1Component.LoseShip();
             }
             else
             {

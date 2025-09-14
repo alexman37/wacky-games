@@ -46,7 +46,7 @@ namespace Games.Battleship
             }
         }
 
-        public void loseShip()
+        public void LoseShip()
         {
             totalShipValue--;
         }

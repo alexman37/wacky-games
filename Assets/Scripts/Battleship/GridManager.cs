@@ -69,14 +69,14 @@ namespace Games.Battleship
                     );
                     */
                     GameObject playerTile = Instantiate(PlayerTilePrefab, worldPositionPlayer1Tile, Quaternion.identity);
-                    playerTile.name = $"P1_{row}_{col}";
+                    playerTile.name = $"P1_{col}_{row}";
                     playerTile.transform.parent = Player1GridParent.transform;
                     Player1Grid[position] = playerTile;
                     PlayerTile tileComponentP1 = playerTile.GetComponent<PlayerTile>();
                     tileComponentP1.coordinates = position;
 
                     GameObject shotTile = Instantiate(ShotTilePrefab, worldPositionPlayer2Tile, Quaternion.identity);
-                    shotTile.name = $"P2_{row}_{col}";
+                    shotTile.name = $"P2_{col}_{row}";
                     shotTile.transform.parent = Player2GridParent.transform;
                     Player2Grid[position] = shotTile;
                     ShotTile tileComponentP2 = shotTile.GetComponent<ShotTile>();

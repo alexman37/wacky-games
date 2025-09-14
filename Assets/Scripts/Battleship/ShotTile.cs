@@ -59,7 +59,6 @@ namespace Games.Battleship
         {
             hasShip = true;
             shipPresent = ship;
-            Debug.Log("Add enemy ship to " + coordinates);
         }
 
         public void HighlightForAttacking()
@@ -77,7 +76,7 @@ namespace Games.Battleship
             {
                 hitMarkerRenderer.material = hitMaterial; // Change the material to indicate a hit
                 bool stillStanding = shipPresent.HitShipSegment(this);
-                if (!stillStanding) BattleshipManager.Instance.player2Component.loseShip();
+                if (!stillStanding) BattleshipManager.Instance.player2Component.LoseShip();
             }
             else
             {
