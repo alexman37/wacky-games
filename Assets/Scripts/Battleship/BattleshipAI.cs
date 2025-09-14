@@ -7,11 +7,6 @@ namespace Games.Battleship
     /// Everything to do with the CPU player
     public class BattleshipAI : BattleshipPlayer
     {
-        // Functionally it's the same setup as Player1 but we use "ShotTiles" instead of "PlayerTiles" for convenience
-        public new List<ShotTile> shipTiles = new List<ShotTile>(); // To represent this player's ships
-        public new List<ShotTile> checkedTiles = new List<ShotTile>(); // To represent which tiles this player has checked
-        public new List<ShotTile> tilesEnemyHit = new List<ShotTile>(); // To represent which tiles of the player have been attacked
-
         private List<Ship> enemyShipsRemaining;
 
         // thinking logic
@@ -111,7 +106,6 @@ namespace Games.Battleship
             Debug.Log("Placed CPU ship " + ship.shipType);
             BattleshipTopBarUI.instance.displayDebugInfo("Placed CPU ship " + ship.shipType);
 
-            shipTiles.AddRange(tiles);
             ship.PlaceShip(tiles);
             foreach (ShotTile t in tiles) t.SetAsShip(ship);
 
@@ -228,7 +222,9 @@ namespace Games.Battleship
         private List<HitMatrixTile> nextHitCandidates;
         private HitMatrixTile[,] hitMatrix;
         // TODO - possible locations of each ship
-
+        // The last successful shot, if any
+        private Vector2Int lastSuccessfulShot;
+        private bool checkingRelatedShot = false;
 
         // SETUP
         public BattleshipAI_DecisionMatrix()
@@ -284,7 +280,8 @@ namespace Games.Battleship
 
                 Debug.Log("Shooting at " + chosen.coordinates + " on basis of NEARBY HIT");
                 return chosen.coordinates;
-            } else
+            } 
+            else
             {
                 Shuffle(validTargetSet);
                 validTargetSet.Sort();
@@ -304,7 +301,8 @@ namespace Games.Battleship
             while (n > 1)
             {
                 n--;
-                int k = UnityEngine.Random.Range(0, n + 1);
+                int k = n;
+                while(k == n) k = UnityEngine.Random.Range(0, list.Count - 1); // Edge case k == n
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
@@ -352,9 +350,29 @@ namespace Games.Battleship
                         shipsToTiles[pt.shipPresent.shipType].Add(hitMatrix[(int)t.coordinates.x, (int)t.coordinates.y]);
                     });
                 }
-            }
+                // Have we had a previous hit? If so, is it similar to this current one?
+                if (lastSuccessfulShot != null)
+                {
+                    checkingRelatedShot = true;
+                    recalculateSimilarHitCandidates(lastSuccessfulShot, coords);
+                }
+                lastSuccessfulShot = coords;
 
-            recalculateNextHitCandidates();
+            }
+            else if(checkingRelatedShot)
+            {
+                // We were checking related shots, but this one was a miss.
+                // However, we KNOW there are still more hits on this ship, so lets
+                // try and check the other one more time.
+                recalculateSimilarHitCandidates(lastSuccessfulShot, coords);
+                // No matter what, we are done checking related shots after this.
+                checkingRelatedShot = false;
+            }
+            else
+            {
+                recalculateNextHitCandidates();
+            }
+                
         }
 
         // Sink an enemy ship. You have to ensure you're no longer caring about it on the hit matrix.
@@ -362,6 +380,7 @@ namespace Games.Battleship
         {
             shipsToTiles[sunk.shipType].ForEach(t => t.status = AITileStatus.SUNK);
             recalculateEntireGrid(remaining);
+            checkingRelatedShot = false;
         }
 
         /// <summary>
@@ -391,6 +410,49 @@ namespace Games.Battleship
                     if (hitMatrix[w, h].score > 0 && hitMatrix[w, h].status == AITileStatus.OPEN && !nextHitCandidates.Contains(hitMatrix[w, h]))
                         nextHitCandidates.Add(hitMatrix[w, h]);
                 }
+            }
+        }
+
+        //Driver to recalculate tiles in the same row or column of previous hits. 
+        // If the AI has struck 2 tiles in the same row/col, chances are that row/col has more valid targets.
+        public void recalculateSimilarHitCandidates(Vector2Int previousHit, Vector2Int coordinatesOfHit)
+        {
+            nextHitCandidates = new List<HitMatrixTile>();
+            if (previousHit.x != coordinatesOfHit.x && previousHit.y != coordinatesOfHit.y)
+            {
+                // Not in the same row or column, so we can't use this information.
+                recalculateNextHitCandidates();
+                return;
+            }
+            else
+            {
+                if(previousHit.x == coordinatesOfHit.x)
+                {
+                    // Same column, so we want to look for other hits in this column
+                    for(int h = 0; h < BattleshipManager.GridHeight; h++)
+                    {
+                        if(hitMatrix[previousHit.x, h].status == AITileStatus.OPEN && hitMatrix[previousHit.x, h].score > 0 && !nextHitCandidates.Contains(hitMatrix[previousHit.x, h]))
+                        {
+                            nextHitCandidates.Add(hitMatrix[previousHit.x, h]);
+                        }
+                    }
+                } 
+                else
+                {
+                    // Same row, so we want to look for other hits in this row
+                    for (int w = 0; w < BattleshipManager.GridWidth; w++)
+                    {
+                        if (hitMatrix[w, previousHit.y].status == AITileStatus.OPEN && hitMatrix[w, previousHit.y].score > 0 && !nextHitCandidates.Contains(hitMatrix[w, previousHit.y]))
+                        {
+                            nextHitCandidates.Add(hitMatrix[w, previousHit.y]);
+                        }
+                    }
+                }
+            }
+            //Failover if there are no valid candidates found in the same row/column as previous hits.
+            if (nextHitCandidates.Count == 0)
+            {
+                recalculateNextHitCandidates();
             }
         }
 
