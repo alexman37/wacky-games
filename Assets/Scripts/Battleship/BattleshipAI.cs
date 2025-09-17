@@ -246,7 +246,6 @@ namespace Games.Battleship
                 {
                     decisionMatrix[w, h] = new DecisionMatrixTile(w, h);
                     hitMatrix[w, h] = new HitMatrixTile(w, h);
-                    validTargetSet.Add(decisionMatrix[w, h]);
                 }
             }
         }
@@ -280,6 +279,7 @@ namespace Games.Battleship
                 nextHitCandidates.Sort();
 
                 HitMatrixTile chosen = nextHitCandidates[UnityEngine.Random.Range(0, Mathf.CeilToInt(nextHitCandidates.Count * (1 - factor)))];
+                validTargetSet.Remove(chosen);
                 nextHitCandidates.Remove(chosen);
 
                 Debug.Log("Shooting at " + chosen.coordinates + " on basis of NEARBY HIT");
@@ -291,6 +291,7 @@ namespace Games.Battleship
 
                 DecisionMatrixTile chosen = validTargetSet[UnityEngine.Random.Range(0, Mathf.CeilToInt(validTargetSet.Count * (1 - factor)))];
                 validTargetSet.Remove(chosen);
+                nextHitCandidates.Remove(hitMatrix[chosen.coordinates.x, chosen.coordinates.y]);
 
                 Debug.Log("Shooting at " + chosen.coordinates + " on basis of DECISION MATRIX");
                 return chosen.coordinates;
@@ -376,6 +377,7 @@ namespace Games.Battleship
                 {
                     recalculateTile(w, h, enemyShipsRemaining);
                     recalculateHitTile(w, h, enemyShipsRemaining);
+                    if(decisionMatrix[w,h].status == AITileStatus.OPEN) validTargetSet.Add(decisionMatrix[w, h]);
                 }
             }
         }
