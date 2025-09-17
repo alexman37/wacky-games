@@ -7,11 +7,6 @@ namespace Games.Battleship
     /// Everything to do with the CPU player
     public class BattleshipAI : BattleshipPlayer
     {
-        // Functionally it's the same setup as Player1 but we use "ShotTiles" instead of "PlayerTiles" for convenience
-        public new List<ShotTile> shipTiles = new List<ShotTile>(); // To represent this player's ships
-        public new List<ShotTile> checkedTiles = new List<ShotTile>(); // To represent which tiles this player has checked
-        public new List<ShotTile> tilesEnemyHit = new List<ShotTile>(); // To represent which tiles of the player have been attacked
-
         private List<Ship> enemyShipsRemaining;
 
         // thinking logic
@@ -42,8 +37,8 @@ namespace Games.Battleship
             playerBattleships = BattleshipManager.Instance.shipTypes;
 
             // thankfully you only have to do this once on startup
-            decisionMatrix.recalculateEntireGrid(enemyShipsRemaining);
-            decisionMatrix.redrawDebugViz();
+            decisionMatrix.RecalculateEntireGrid(enemyShipsRemaining);
+            decisionMatrix.RedrawDebugViz();
         }
 
 
@@ -95,8 +90,8 @@ namespace Games.Battleship
                     PlaceCPUShip(working, ship);
                     break;
                 }
-                
-                if(attempt >= 20)
+
+                if (attempt >= 20)
                 {
                     Debug.LogError("Failed to find suitable placements for the CPU player's fleet.");
                     throw new System.Exception("Failed to find suitable placements for the CPU player's fleet.");
@@ -111,7 +106,6 @@ namespace Games.Battleship
             Debug.Log("Placed CPU ship " + ship.shipType);
             BattleshipTopBarUI.instance.displayDebugInfo("Placed CPU ship " + ship.shipType);
 
-            shipTiles.AddRange(tiles);
             ship.PlaceShip(tiles);
             foreach (ShotTile t in tiles) t.SetAsShip(ship);
 
@@ -138,28 +132,29 @@ namespace Games.Battleship
         public void TakeCPUTurn()
         {
             ShootAtPlayer();
-
+            
             BattleshipManager.Instance.EndTurn();
         }
 
         // Shoot at the player. Swap out the algorithm for determining where to shoot, if you like
         public void ShootAtPlayer()
         {
-            Vector2Int whereToShoot = decisionMatrix.getSmartRandomTile(0.95f);
-
+            Vector2Int whereToShoot = decisionMatrix.GetSmartRandomTile(0.95f);
+            Debug.Log("CPU shooting at " + whereToShoot.x + "," + whereToShoot.y);
+            
             PlayerTile shootAtThis = GridManager.Instance.GetPlayerTileFromPosition(whereToShoot.x, whereToShoot.y);
             (bool hit, bool standing) shootResult = shootAtThis.ShootThisTile();
 
-            decisionMatrix.shootTile(Vector2Int.FloorToInt(shootAtThis.coordinates), shootResult.hit);
+            decisionMatrix.ShootTile(Vector2Int.FloorToInt(shootAtThis.coordinates), shootResult.hit);
 
             // If we sunk the ship, need to recalculate the entire hit matrix.
             if (!shootResult.standing)
             {
                 Ship sunk = enemyShipsRemaining.Find(ship => ship.shipType == shootAtThis.shipPresent.shipType);
-                decisionMatrix.sinkShip(sunk, enemyShipsRemaining);
+                decisionMatrix.SinkShip(sunk, enemyShipsRemaining);
             }
 
-            decisionMatrix.redrawDebugViz();
+            decisionMatrix.RedrawDebugViz();
         }
 
 
@@ -228,7 +223,9 @@ namespace Games.Battleship
         private List<HitMatrixTile> nextHitCandidates;
         private HitMatrixTile[,] hitMatrix;
         // TODO - possible locations of each ship
-
+        // The last successful shot, if any
+        private Vector2Int lastSuccessfulShot;
+        private bool checkingRelatedShot = false;
 
         // SETUP
         public BattleshipAI_DecisionMatrix()
@@ -258,7 +255,7 @@ namespace Games.Battleship
         /// <summary>
         /// Get a completely random tile with no regard for scores or logic
         /// </summary>
-        public Vector2Int getTotallyRandomTile()
+        public Vector2Int GetTotallyRandomTile()
         {
             DecisionMatrixTile chosen = validTargetSet[UnityEngine.Random.Range(0, validTargetSet.Count)];
             validTargetSet.Remove(chosen);
@@ -268,12 +265,12 @@ namespace Games.Battleship
         /// <summary>
         /// Get a tile with some logic in mind. "Factor" is from 0-1, the higher it is, the smarter the decision will generally be
         /// </summary>
-        public Vector2Int getSmartRandomTile(float factor)
+        public Vector2Int GetSmartRandomTile(float factor)
         {
 
             // Explicitly pursue hits, or just go with decision matrix?
             // Multiply factor by 2: Difficulty .5 or higher will always pursue hits
-            if (nextHitCandidates.Count > 0 && UnityEngine.Random.value < factor * 2)
+            if (nextHitCandidates.Count > 0)
             {
                 Shuffle(nextHitCandidates);
                 nextHitCandidates.Sort();
@@ -281,10 +278,11 @@ namespace Games.Battleship
                 HitMatrixTile chosen = nextHitCandidates[UnityEngine.Random.Range(0, Mathf.CeilToInt(nextHitCandidates.Count * (1 - factor)))];
                 validTargetSet.Remove(chosen);
                 nextHitCandidates.Remove(chosen);
-
+                validTargetSet.Remove(decisionMatrix[chosen.coordinates.x, chosen.coordinates.y]);
                 Debug.Log("Shooting at " + chosen.coordinates + " on basis of NEARBY HIT");
                 return chosen.coordinates;
-            } else
+            } 
+            else
             {
                 Shuffle(validTargetSet);
                 validTargetSet.Sort();
@@ -305,7 +303,8 @@ namespace Games.Battleship
             while (n > 1)
             {
                 n--;
-                int k = UnityEngine.Random.Range(0, n + 1);
+                int k = n;
+                while(k == n) k = UnityEngine.Random.Range(0, list.Count - 1); // Edge case k == n
                 T value = list[k];
                 list[k] = list[n];
                 list[n] = value;
@@ -319,7 +318,7 @@ namespace Games.Battleship
         /// <summary>
         /// Don't have to recalculate the entire grid when shooting a single tile - just recalculate enough surrounding area
         /// </summary>
-        public void shootTile(Vector2Int coords, bool hit)
+        public void ShootTile(Vector2Int coords, bool hit)
         {
             decisionMatrix[coords.x, coords.y].status = hit ? AITileStatus.HIT : AITileStatus.MISS;
             hitMatrix[coords.x, coords.y].status = hit ? AITileStatus.HIT : AITileStatus.MISS;
@@ -333,13 +332,13 @@ namespace Games.Battleship
             // Only need to reclalculate as far as the longest ship in the same row and column (either direction).
             for (int w = Mathf.Max(0, coords.x - (longestShipLength - 1)); w < Mathf.Min(BattleshipManager.GridWidth, coords.x + longestShipLength); w++)
             {
-                recalculateTile(w, coords.y, ships);
-                recalculateHitTile(w, coords.y, ships);
+                RecalculateTile(w, coords.y, ships);
+                RecalculateHitTile(w, coords.y, ships);
             }
             for (int h = Mathf.Max(0, coords.y - (longestShipLength - 1)); h < Mathf.Min(BattleshipManager.GridHeight, coords.y + longestShipLength); h++)
             {
-                recalculateTile(coords.x, h, ships);
-                recalculateHitTile(coords.x, h, ships);
+                RecalculateTile(coords.x, h, ships);
+                RecalculateHitTile(coords.x, h, ships);
             }
 
             // Update hit matrix + shipsToTiles if necessary
@@ -353,36 +352,57 @@ namespace Games.Battleship
                         shipsToTiles[pt.shipPresent.shipType].Add(hitMatrix[(int)t.coordinates.x, (int)t.coordinates.y]);
                     });
                 }
-            }
+                // Have we had a previous hit? If so, is it similar to this current one?
+                if (lastSuccessfulShot != null)
+                {
+                    checkingRelatedShot = true;
+                    RecalculateSimilarHitCandidates(lastSuccessfulShot, coords);
+                }
+                lastSuccessfulShot = coords;
 
-            recalculateNextHitCandidates();
+            }
+            else if(checkingRelatedShot)
+            {
+                // We were checking related shots, but this one was a miss.
+                // However, we KNOW there are still more hits on this ship, so lets
+                // try and check the other one more time.
+                RecalculateSimilarHitCandidates(lastSuccessfulShot, coords);
+                // No matter what, we are done checking related shots after this.
+                checkingRelatedShot = false;
+            }
+            else
+            {
+                RecalculateNextHitCandidates();
+            }
+                
         }
 
         // Sink an enemy ship. You have to ensure you're no longer caring about it on the hit matrix.
-        public void sinkShip(Ship sunk, List<Ship> remaining)
+        public void SinkShip(Ship sunk, List<Ship> remaining)
         {
             shipsToTiles[sunk.shipType].ForEach(t => t.status = AITileStatus.SUNK);
-            recalculateEntireGrid(remaining);
+            RecalculateEntireGrid(remaining);
+            checkingRelatedShot = false;
         }
 
         /// <summary>
         /// Recalculate everything - expensive! avoid when possible
         /// </summary>
-        public void recalculateEntireGrid(List<Ship> enemyShipsRemaining)
+        public void RecalculateEntireGrid(List<Ship> enemyShipsRemaining)
         {
             // For each tile
             for (int w = 0; w < BattleshipManager.GridWidth; w++)
             {
                 for (int h = 0; h < BattleshipManager.GridHeight; h++)
                 {
-                    recalculateTile(w, h, enemyShipsRemaining);
-                    recalculateHitTile(w, h, enemyShipsRemaining);
+                    RecalculateTile(w, h, enemyShipsRemaining);
+                    RecalculateHitTile(w, h, enemyShipsRemaining);
                     if(decisionMatrix[w,h].status == AITileStatus.OPEN) validTargetSet.Add(decisionMatrix[w, h]);
                 }
             }
         }
 
-        public void recalculateNextHitCandidates()
+        public void RecalculateNextHitCandidates()
         {
             nextHitCandidates = new List<HitMatrixTile>();
 
@@ -396,10 +416,53 @@ namespace Games.Battleship
             }
         }
 
+        //Driver to recalculate tiles in the same row or column of previous hits. 
+        // If the AI has struck 2 tiles in the same row/col, chances are that row/col has more valid targets.
+        public void RecalculateSimilarHitCandidates(Vector2Int previousHit, Vector2Int coordinatesOfHit)
+        {
+            nextHitCandidates = new List<HitMatrixTile>();
+            if (previousHit.x != coordinatesOfHit.x && previousHit.y != coordinatesOfHit.y)
+            {
+                // Not in the same row or column, so we can't use this information.
+                RecalculateNextHitCandidates();
+                return;
+            }
+            else
+            {
+                if(previousHit.x == coordinatesOfHit.x)
+                {
+                    // Same column, so we want to look for other hits in this column
+                    for(int h = 0; h < BattleshipManager.GridHeight; h++)
+                    {
+                        if(hitMatrix[previousHit.x, h].status == AITileStatus.OPEN && hitMatrix[previousHit.x, h].score > 0 && !nextHitCandidates.Contains(hitMatrix[previousHit.x, h]))
+                        {
+                            nextHitCandidates.Add(hitMatrix[previousHit.x, h]);
+                        }
+                    }
+                } 
+                else
+                {
+                    // Same row, so we want to look for other hits in this row
+                    for (int w = 0; w < BattleshipManager.GridWidth; w++)
+                    {
+                        if (hitMatrix[w, previousHit.y].status == AITileStatus.OPEN && hitMatrix[w, previousHit.y].score > 0 && !nextHitCandidates.Contains(hitMatrix[w, previousHit.y]))
+                        {
+                            nextHitCandidates.Add(hitMatrix[w, previousHit.y]);
+                        }
+                    }
+                }
+            }
+            //Failover if there are no valid candidates found in the same row/column as previous hits.
+            if (nextHitCandidates.Count == 0)
+            {
+                RecalculateNextHitCandidates();
+            }
+        }
+
         /// <summary>
         /// Get the current decision matrix as a 2D int array of just the scores
         /// </summary>
-        private int[,] extractScores(DecisionMatrixTile[,] decisionMatrix)
+        private int[,] ExtractScores(DecisionMatrixTile[,] decisionMatrix)
         {
             int[,] scoreArr = new int[BattleshipManager.GridWidth, BattleshipManager.GridHeight];
 
@@ -420,18 +483,17 @@ namespace Games.Battleship
         /// <summary>
         /// Tell the debug drawer, if it exists, to redraw decision and hit matrices
         /// </summary>
-        public void redrawDebugViz()
+        public void RedrawDebugViz()
         {
             if(DecisionMatrixDebugUI.instance != null)
             {
-                DecisionMatrixDebugUI.instance.redrawDecisionGrid(extractScores(decisionMatrix));
-                DecisionMatrixDebugUI.instance.redrawHitGrid(extractScores(hitMatrix));
+                DecisionMatrixDebugUI.instance.redrawDecisionGrid(ExtractScores(decisionMatrix));
+                DecisionMatrixDebugUI.instance.redrawHitGrid(ExtractScores(hitMatrix));
             }
         }
 
-        private void recalculateTile(int w, int h, List<Ship> ships)
+        private void RecalculateTile(int w, int h, List<Ship> ships)
         {
-            //Debug.Log("Recalc tile " + w + ", " + h);
             if (decisionMatrix[w, h].status == AITileStatus.OPEN)
             {
                 decisionMatrix[w, h].recalc();
@@ -492,8 +554,6 @@ namespace Games.Battleship
                         // If valid, add a point to the score
                         if (workingArrangement) tile.score += 1;
                     }
-
-                    ///Debug.Log("Final score assoc. with tile " + w + "," + h + ":" + decisionMatrix[w, h].score);
                 }
             }
         }
@@ -502,7 +562,7 @@ namespace Games.Battleship
         /// <summary>
         /// Functionally similar to recalculateTile, but it works for hit matrices and specifically looks for hit tiles
         /// </summary>
-        private void recalculateHitTile(int w, int h, List<Ship> ships)
+        private void RecalculateHitTile(int w, int h, List<Ship> ships)
         {
             //Debug.Log("Recalc tile " + w + ", " + h);
             if (hitMatrix[w, h].status == AITileStatus.OPEN)

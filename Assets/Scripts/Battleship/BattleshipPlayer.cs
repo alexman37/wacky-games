@@ -6,9 +6,6 @@ namespace Games.Battleship
 {
     public class BattleshipPlayer : MonoBehaviour
     {
-        public List<PlayerTile> shipTiles = new List<PlayerTile>(); // To represent this player's ships
-        public List<PlayerTile> checkedTiles = new List<PlayerTile>(); // To represent which tiles this player has checked
-        public List<PlayerTile> tilesEnemyHit = new List<PlayerTile>(); // To represent which tiles of the player have been attacked
         public List<BattleshipShipType> playerBattleships;
         public int totalShipValue = 0;
         public bool isPlayer1 = false; // To determine which player this is
@@ -31,7 +28,6 @@ namespace Games.Battleship
             // Ignore if we've already placed this ship
             if(!playerBattleships.Contains(ship.shipType))
             {
-                shipTiles.AddRange(tiles);
                 ship.PlaceShip(tiles);
                 BattleshipTopBarUI.instance.displayDebugInfo("Placed ship " + ship.shipType);
 
@@ -50,7 +46,7 @@ namespace Games.Battleship
             }
         }
 
-        public void loseShip()
+        public void LoseShip()
         {
             totalShipValue--;
         }

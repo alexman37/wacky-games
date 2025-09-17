@@ -180,8 +180,8 @@ namespace Games.Battleship
     
     public class GameOverState : BattleshipGameState
     {
-        private BattleshipTurn victor;
-        public GameOverState(BattleshipManager manager, BattleshipTurn victor) : base(manager) 
+        private WinCondition victor;
+        public GameOverState(BattleshipManager manager, WinCondition victor) : base(manager) 
         {
             this.victor = victor;
         }
@@ -191,10 +191,10 @@ namespace Games.Battleship
             manager.currentTurn = BattleshipTurn.GAME_OVER;
             switch (victor)
             {
-                case BattleshipTurn.PLAYER1:
+                case WinCondition.PLAYER1_WIN:
                     Debug.Log("Player 1 wins!");
                     break;
-                case BattleshipTurn.PLAYER2:
+                case WinCondition.PLAYER2_WIN:
                     Debug.Log("Player 2 wins!");
                     break;
                 default:
