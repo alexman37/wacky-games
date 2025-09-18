@@ -32,6 +32,8 @@ namespace Games.Battleship
         public GameObject playerPrefab;
         public BattleshipPlayer player1Component;
         public BattleshipAI player2Component;
+        public List<GameObject> shipPrefabs; // List of ship prefabs to instantiate when placing ships.
+        private GameObject currentShipPrefab; // The current ship prefab being placed.
 
 
         public static event Action<string> changedGameState;
@@ -111,8 +113,41 @@ namespace Games.Battleship
 
         public void SetShipType(Ship ship)
         {
+            Debug.Log("Selected ship type: " + ship.shipType);
             selectedShipType = ship.shipType;
             selectedShip = ship;
+            if(currentShipPrefab != null)
+            {
+                Destroy(currentShipPrefab);
+            }
+            currentShipPrefab = Instantiate(shipPrefabs[(int)selectedShipType]);
+            HandleRotation(shipRotation);
+            currentShipPrefab.AddComponent<BattleshipMouseFollower>();
+        }
+
+        public void HandleRotation(BattleshipRotation rotation)
+        {
+            GridManager.Instance.StopRotationHighlight();
+            if (currentShipPrefab != null)
+            {
+                if(rotation == BattleshipRotation.HORIZONTAL)
+                {
+                    currentShipPrefab.transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                else if(rotation == BattleshipRotation.VERTICAL)
+                {
+                    currentShipPrefab.transform.rotation = Quaternion.Euler(0, 90, 0);
+                }
+            }
+        }
+
+        public void PlaceShipModel(Vector3 shipPos)
+        {
+            GameObject newShip = Instantiate(currentShipPrefab);
+            newShip.transform.localPosition = shipPos;
+            newShip.name = selectedShipType.ToString() + "_new";
+            Destroy(newShip.GetComponent<BattleshipMouseFollower>());
+            Destroy(currentShipPrefab);
         }
 
         public BattleshipShipType GetSelectedShipType()
