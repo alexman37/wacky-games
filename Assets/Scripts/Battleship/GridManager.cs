@@ -1,3 +1,4 @@
+using Games.Minesweeper;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,8 @@ namespace Games.Battleship
         public GameObject Player2GridParent;
 
         public static GridManager Instance;
+
+        private List<BattleshipTile> highlightedTiles = new List<BattleshipTile>();
         public GridManager()
         {
             if (Instance == null)
@@ -127,8 +130,13 @@ namespace Games.Battleship
                     tile.StartChangingTransparency(duration);
                 }
             }
+            highlightedTiles = tiles;
         }
 
+        public void StopRotationHighlight()
+        {
+            StopTransparencyChangeTiles(highlightedTiles);
+        }
         public void StopTransparencyChangeTiles(List<BattleshipTile> tiles)
         {
             if (tiles == null)
@@ -160,10 +168,17 @@ namespace Games.Battleship
             // communicate to the correct player that a ship was placed
             BattleshipManager.Instance.player1Component.PlaceShip(tilesSelected, ship);
             // if that worked - visually change the tile to indicate there is a ship here
+            float xSum = 0;
+            float zSum = 0;
+            float yPos = tilesSelected[0].transform.position.y; // all tiles should be the same height
             foreach (PlayerTile tile in tilesSelected)
             {
                 tile.SetAsShip(ship);
+                xSum += tile.transform.position.x;
+                zSum += tile.transform.position.z;
             }
+            Vector3 shipAvgPos = new Vector3(xSum / tilesSelected.Count, 0, zSum / tilesSelected.Count);
+            BattleshipManager.Instance.PlaceShipModel(shipAvgPos);
             // clear out ship to place since we set it successfully
             BattleshipManager.Instance.selectedShipType = BattleshipShipType.NONE;
 

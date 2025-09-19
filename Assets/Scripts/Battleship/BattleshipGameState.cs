@@ -73,11 +73,13 @@ namespace Games.Battleship
                 if (manager.shipRotation == BattleshipRotation.HORIZONTAL)
                 {
                     manager.shipRotation = BattleshipRotation.VERTICAL;
+
                 }
                 else
                 {
                     manager.shipRotation = BattleshipRotation.HORIZONTAL;
                 }
+                manager.HandleRotation(manager.shipRotation);
             }
             // TODO I do not understand what this is doing.
             if(Input.GetMouseButtonDown(0))
