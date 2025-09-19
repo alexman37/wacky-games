@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -131,8 +132,14 @@ namespace Games.Battleship
         // Start the bot's turn. TODO play animations, etc...
         public void TakeCPUTurn()
         {
+            StartCoroutine(botWaits(2));
+        }
+
+        IEnumerator botWaits(float sec)
+        {
+            yield return new WaitForSeconds(sec);
             ShootAtPlayer();
-            
+
             BattleshipManager.Instance.EndTurn();
         }
 

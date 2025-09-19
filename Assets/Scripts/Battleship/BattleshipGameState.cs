@@ -120,6 +120,7 @@ namespace Games.Battleship
         {
             Debug.Log("Player 1's Turn");
             BattleshipTopBarUI.instance.displayDebugInfo("It's your Turn");
+            BattleshipCameraManager.instance.TransitionToCameraPlayer2View();
         }
 
         // TODO: Check player input for attacks. Maybe we can do both keyboard input and mouse input
@@ -142,6 +143,7 @@ namespace Games.Battleship
         {
             Debug.Log("Player 2's Turn");
             BattleshipTopBarUI.instance.displayDebugInfo("The bot is thinking");
+            BattleshipCameraManager.instance.TransitionToCameraPlayer1View();
 
             manager.player2Component.TakeCPUTurn();
         }

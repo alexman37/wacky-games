@@ -1,14 +1,27 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Games.Battleship
 {
     /// Camera for battleship
-    public static class BattleshipCameraManager
+    public class BattleshipCameraManager : MonoBehaviour
     {
+        public static BattleshipCameraManager instance;
+
         public static Camera MainCamera { get; private set; }
         static bool LookingAtPlayerBoard = true;
         public static float turnSpeed = 0.1f;
+
+        private static Vector3 player1Cam = new Vector3(5, 13, -4);
+        private static Vector3 player2Cam = new Vector3(5, 13, 6);
+
+        private void Start()
+        {
+            if (instance == null) instance = this;
+            else Destroy(this.gameObject);
+        }
+
         public static void Initialize()
         {
             MainCamera = Camera.main;
@@ -18,7 +31,7 @@ namespace Games.Battleship
             }
             else
             {
-                MainCamera.transform.position = new Vector3(5, 13, -4);
+                MainCamera.transform.position = player1Cam;
                 MainCamera.transform.rotation = Quaternion.Euler(90, 0, 0);
             }
         }
@@ -28,8 +41,16 @@ namespace Games.Battleship
         {
             if (MainCamera != null)
             {
-                MainCamera.transform.position = new Vector3(5, 13, -4);
+                MainCamera.transform.position = player1Cam;
                 MainCamera.transform.rotation = Quaternion.Euler(90,0,0);
+            }
+        }
+
+        public void TransitionToCameraPlayer1View()
+        {
+            if (MainCamera != null)
+            {
+                StartCoroutine(cameraTransition(1f, MainCamera.transform.position, player1Cam));
             }
         }
 
@@ -37,7 +58,24 @@ namespace Games.Battleship
         {
             if (MainCamera != null)
             {
-                MainCamera.transform.position = new Vector3(5, 13, 6);
+                MainCamera.transform.position = player2Cam;
+            }
+        }
+
+        public void TransitionToCameraPlayer2View()
+        {
+            if (MainCamera != null)
+            {
+                StartCoroutine(cameraTransition(1f, MainCamera.transform.position, player2Cam));
+            }
+        }
+
+        private static IEnumerator cameraTransition(float time, Vector3 start, Vector3 end)
+        {
+            for(float t = 0; t < time; t += Time.deltaTime)
+            {
+                MainCamera.transform.position = UIUtils.XerpStandard(start, end, t / time);
+                yield return null;
             }
         }
 
