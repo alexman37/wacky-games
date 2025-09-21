@@ -33,6 +33,7 @@ namespace Games.Battleship
                 shipPlacement.GetComponent<ShipUI>().Initialize(ship.GetShipType());
                 shipPlacement.name = ship.GetShipType().ToString();
                 shipPlacement.transform.SetParent(shipPlacementPanel.transform);
+                Debug.Log("shipPlacement pos " + shipPlacement.transform.position);
                 createdShips.Add(shipPlacement);
             }
             shipPlacementPanel.GetComponent<WidgetPopup>().openWidgetPopup();

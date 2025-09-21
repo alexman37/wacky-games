@@ -10,6 +10,10 @@ namespace Games.Battleship
         public TextMeshProUGUI turnTeller;
         public TextMeshProUGUI debugInfo;
 
+        public ShipViewPopup shipViewYours;
+        public ShipViewPopup shipViewTheirs;
+        private bool shipViewOpen;
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
@@ -21,13 +25,32 @@ namespace Games.Battleship
 
         void updatePhase(string toState)
         {
-            string[] s = toState.Split('.');
-            turnTeller.text = "Phase: " + s[s.Length-1];
+            turnTeller.text = "Phase: " + toState;
         }
 
         public void displayDebugInfo(string info)
         {
             debugInfo.text = info;
+        }
+
+        public void openBothShipViews()
+        {
+            shipViewYours.openWidgetPopup();
+            shipViewTheirs.openWidgetPopup();
+            shipViewOpen = true;
+        }
+
+        public void closeBothShipViews()
+        {
+            shipViewYours.closeWidgetPopup();
+            shipViewTheirs.closeWidgetPopup();
+            shipViewOpen = false;
+        }
+
+        public void toggleShipViews()
+        {
+            if (!shipViewOpen) openBothShipViews();
+            else closeBothShipViews();
         }
     }
 

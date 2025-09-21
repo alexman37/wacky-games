@@ -169,7 +169,8 @@ namespace Games.Battleship
                 currentState.Enter();
             }
 
-            changedGameState.Invoke(newState.GetType().ToString());
+            string[] s = newState.GetType().ToString().Split('.');
+            changedGameState.Invoke(s[s.Length-1]);
         }
 
         // Used for like tile highlighting depending on if its the player turn or setup phase
